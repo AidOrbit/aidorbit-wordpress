@@ -84,6 +84,18 @@ Shortcode:
 
 Use this for a public organization header or about section. The block renders AidOrbit-approved public profile fields such as display name, tagline, public description, logo, cover image, website, donation link, public contact email, and social links. It does not expose private organization settings or Volunteer data.
 
+## Donation CTA
+
+Block: AidOrbit Donation CTA
+
+Shortcode:
+
+```text
+[aidorbit_donation_cta]
+```
+
+Use this when a page needs a focused donation entry point. The block uses the organization donation URL returned by AidOrbit, or a `donateUrl` override when a campaign-specific destination is needed. Donation processing remains outside WordPress.
+
 ## Program Portal
 
 Block: AidOrbit Program Portal

@@ -183,6 +183,10 @@ final class AidOrbit_Admin {
 				'title'   => __('Organization Profile', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/organization-profile /-->',
 			),
+			'donate' => array(
+				'title'   => __('Donate', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/donation-cta /-->',
+			),
 			'volunteer-missions' => array(
 				'title'   => __('Volunteer Missions', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/organization-portal {"view":"grid","limit":12} /-->',

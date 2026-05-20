@@ -29,6 +29,7 @@ API tokens and webhook secrets are write-only in the settings screen. They are s
 On Settings > AidOrbit, select Create starter pages. The plugin creates these draft pages:
 
 - Organization Profile: a public profile header with AidOrbit-approved organization details.
+- Donate: a focused donation entry point using AidOrbit-approved donation routing.
 - Volunteer Missions: an organization-wide Mission discovery page.
 - Program Directory: a public directory of authorized Programs.
 - Volunteer Dashboard: a sign-in entry point for Volunteers.

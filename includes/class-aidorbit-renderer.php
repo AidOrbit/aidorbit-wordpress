@@ -148,6 +148,35 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	public function donation_cta(array $attributes): string {
+		$this->enqueue_assets();
+		$data = $this->cache->get_or_set('donation_cta', array(), fn () => $this->api_client->organizations(array('limit' => 1)));
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$organizations = $this->extract_items($data);
+		$organization  = is_array($organizations[0] ?? null) ? $organizations[0] : array();
+		$organization_name = $this->field($organization, array('name', 'title'), __('this organization', 'aidorbit'));
+		$summary = $this->field($organization, array('tagline', 'summary', 'description'), '');
+		$donate_url = esc_url((string) ($attributes['donateUrl'] ?? $attributes['donate_url'] ?? $this->field($organization, array('donateUrl', 'donate_url'), '')));
+		if (! $donate_url) {
+			$donate_url = $this->mission_control_url('/donors/donate', $attributes);
+		}
+
+		$html  = '<section class="aidorbit-surface aidorbit-donation-cta">';
+		$html .= '<h2>' . esc_html__('Support the Mission', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html($summary ?: sprintf(
+			/* translators: %s is an organization name. */
+			__('Support %s with a secure donation.', 'aidorbit'),
+			(string) $organization_name
+		)) . '</p>';
+		$html .= '<a class="aidorbit-button" href="' . esc_url($donate_url) . '">' . esc_html__('Donate', 'aidorbit') . '</a>';
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function program_directory(array $attributes): string {
 		$this->enqueue_assets();
 		$attributes = $this->normalize_attributes($attributes);

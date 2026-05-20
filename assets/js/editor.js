@@ -200,6 +200,7 @@
 				teamName: { type: 'string', default: '' },
 				teamSize: { type: 'number', default: 0 },
 				minorConsent: { type: 'string', default: '' },
+				donateUrl: { type: 'string', default: '' },
 				metrics: { type: 'string', default: 'hours,volunteers,missions' }
 			},
 			edit: edit(name, fields),
@@ -299,6 +300,10 @@
 	]);
 
 	register('aidorbit/organization-profile', __('AidOrbit Organization Profile', 'aidorbit'), []);
+
+	register('aidorbit/donation-cta', __('AidOrbit Donation CTA', 'aidorbit'), [
+		{ name: 'donateUrl', label: __('Donation URL override', 'aidorbit') }
+	]);
 
 	register('aidorbit/program-portal', __('AidOrbit Program Portal', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
