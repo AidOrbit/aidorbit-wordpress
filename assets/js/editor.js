@@ -11,11 +11,15 @@
 	var PanelBody = components.PanelBody;
 	var ServerSideRender = serverSideRender;
 	var programOptions = null;
+	var missionOptionsByProgram = {};
 
 	function controls(props, fields) {
 		var optionsState = useState(programOptions || [{ label: __('Enter Program ID manually', 'aidorbit'), value: '' }]);
 		var programs = optionsState[0];
 		var setPrograms = optionsState[1];
+		var missionState = useState([{ label: __('Enter Mission ID manually', 'aidorbit'), value: '' }]);
+		var missions = missionState[0];
+		var setMissions = missionState[1];
 
 		useEffect(function () {
 			if (programOptions !== null || !apiFetch || !window.aidOrbitEditor) {
@@ -34,6 +38,30 @@
 				programOptions = [{ label: __('Enter Program ID manually', 'aidorbit'), value: '' }];
 			});
 		}, []);
+
+		useEffect(function () {
+			if (!apiFetch || !window.aidOrbitEditor) {
+				return;
+			}
+			var program = props.attributes.program || '';
+			var cacheKey = program || '__all__';
+			if (missionOptionsByProgram[cacheKey]) {
+				setMissions(missionOptionsByProgram[cacheKey]);
+				return;
+			}
+			apiFetch({ path: window.aidOrbitEditor.missionsPath + '?program=' + encodeURIComponent(program) }).then(function (response) {
+				var fetched = [{ label: __('Select a Mission', 'aidorbit'), value: '' }];
+				if (response && Array.isArray(response.missions)) {
+					response.missions.forEach(function (mission) {
+						fetched.push({ label: mission.name, value: mission.id });
+					});
+				}
+				missionOptionsByProgram[cacheKey] = fetched;
+				setMissions(fetched);
+			}).catch(function () {
+				missionOptionsByProgram[cacheKey] = [{ label: __('Enter Mission ID manually', 'aidorbit'), value: '' }];
+			});
+		}, [props.attributes.program]);
 
 		return el(
 			InspectorControls,
@@ -72,6 +100,32 @@
 							}),
 							el(TextControl, {
 								label: __('Program ID fallback', 'aidorbit'),
+								value: props.attributes[field.name] || '',
+								onChange: function (value) {
+									var next = {};
+									next[field.name] = value;
+									props.setAttributes(next);
+								}
+							})
+						);
+					}
+
+					if (field.type === 'mission') {
+						return el(
+							'div',
+							{ key: field.name },
+							el(SelectControl, {
+								label: field.label,
+								value: props.attributes[field.name],
+								options: missions,
+								onChange: function (value) {
+									var next = {};
+									next[field.name] = value;
+									props.setAttributes(next);
+								}
+							}),
+							el(TextControl, {
+								label: __('Mission ID fallback', 'aidorbit'),
 								value: props.attributes[field.name] || '',
 								onChange: function (value) {
 									var next = {};
@@ -164,11 +218,13 @@
 	]);
 
 	register('aidorbit/mission-detail', __('AidOrbit Mission Detail', 'aidorbit'), [
-		{ name: 'mission', label: __('Mission ID', 'aidorbit') }
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' }
 	]);
 
 	register('aidorbit/register-cta', __('AidOrbit Register CTA', 'aidorbit'), [
-		{ name: 'mission', label: __('Mission ID', 'aidorbit') },
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
 		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
 		{ name: 'role', label: __('Role ID', 'aidorbit') }
 	]);

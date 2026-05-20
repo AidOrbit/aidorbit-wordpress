@@ -54,6 +54,8 @@ Shortcode:
 
 Use this on a dedicated Mission page. Private, invite-only, internal, organization-only, or expired Missions are not rendered for public display.
 
+When AidOrbit returns public shift or role options, Mission Detail displays them as read-only summaries. Registration still routes through AidOrbit so capacity, eligibility, duplicate registration, and waitlist rules are enforced at submission time.
+
 ## Register CTA
 
 Block: AidOrbit Register CTA

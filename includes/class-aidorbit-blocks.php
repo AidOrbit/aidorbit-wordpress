@@ -39,7 +39,12 @@ final class AidOrbit_Blocks {
 		);
 		wp_add_inline_script(
 			'aidorbit-blocks-editor',
-			'window.aidOrbitEditor = ' . wp_json_encode(array('programsPath' => '/aidorbit/v1/programs')) . ';',
+			'window.aidOrbitEditor = ' . wp_json_encode(
+				array(
+					'programsPath' => '/aidorbit/v1/programs',
+					'missionsPath' => '/aidorbit/v1/missions',
+				)
+			) . ';',
 			'before'
 		);
 	}

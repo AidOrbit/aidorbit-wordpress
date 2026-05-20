@@ -324,12 +324,52 @@ final class AidOrbit_Renderer {
 			$html .= '<div><dt>' . esc_html__('Contact', 'aidorbit') . '</dt><dd>' . esc_html(is_array($contact) ? ($contact['name'] ?? '') : (string) $contact) . '</dd></div>';
 		}
 		$html .= '</dl>';
+		if (! empty($options['detail'])) {
+			$html .= $this->mission_options_summary($mission);
+		}
 		if ($id) {
 			$html .= $this->registration_cta($mission, array());
 		}
 		$html .= '</div></article>';
 
 		return $html;
+	}
+
+	private function mission_options_summary(array $mission): string {
+		$sections = '';
+		$shifts   = $this->field($mission, array('shifts'), array());
+		$roles    = $this->field($mission, array('roles'), array());
+
+		if (is_array($shifts) && $shifts) {
+			$sections .= '<div class="aidorbit-option-list"><h4>' . esc_html__('Shifts', 'aidorbit') . '</h4><ul>';
+			foreach ($shifts as $shift) {
+				if (! is_array($shift)) {
+					continue;
+				}
+				$name      = (string) ($shift['name'] ?? $shift['title'] ?? __('Shift', 'aidorbit'));
+				$starts_at = (string) ($shift['startsAt'] ?? $shift['starts_at'] ?? $shift['start'] ?? '');
+				$label     = $name;
+				if ($starts_at) {
+					$label .= ' - ' . $this->format_datetime($starts_at);
+				}
+				$sections .= '<li>' . esc_html($label) . '</li>';
+			}
+			$sections .= '</ul></div>';
+		}
+
+		if (is_array($roles) && $roles) {
+			$sections .= '<div class="aidorbit-option-list"><h4>' . esc_html__('Roles', 'aidorbit') . '</h4><ul>';
+			foreach ($roles as $role) {
+				if (is_array($role)) {
+					$sections .= '<li>' . esc_html((string) ($role['name'] ?? $role['title'] ?? __('Role', 'aidorbit'))) . '</li>';
+				} else {
+					$sections .= '<li>' . esc_html((string) $role) . '</li>';
+				}
+			}
+			$sections .= '</ul></div>';
+		}
+
+		return $sections ? '<div class="aidorbit-mission-options">' . $sections . '</div>' : '';
 	}
 
 	private function registration_url(string $mission_id, array $attributes): string {

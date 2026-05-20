@@ -44,6 +44,16 @@ final class AidOrbit_Rest {
 				'permission_callback' => array($this, 'authorize_editor'),
 			)
 		);
+
+		register_rest_route(
+			'aidorbit/v1',
+			'/missions',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array($this, 'missions'),
+				'permission_callback' => array($this, 'authorize_editor'),
+			)
+		);
 	}
 
 	public function authorize_editor(): bool {
@@ -112,14 +122,64 @@ final class AidOrbit_Rest {
 		return new WP_REST_Response(array('programs' => $programs), 200);
 	}
 
+	public function missions(WP_REST_Request $request): WP_REST_Response|WP_Error {
+		$query = array(
+			'program' => sanitize_text_field((string) $request->get_param('program')),
+			'range'   => sanitize_text_field((string) ($request->get_param('range') ?: '90d')),
+			'limit'   => 100,
+		);
+		$data  = $this->cache->get_or_set(
+			'mission_options',
+			$query,
+			fn () => $this->api_client->missions($query),
+			(int) $this->settings->get('public_cache_ttl', 300)
+		);
+		if (is_wp_error($data)) {
+			return $data;
+		}
+
+		$missions = array();
+		foreach ($this->extract_items($data) as $mission) {
+			if (! is_array($mission) || ! $this->is_public_mission($mission)) {
+				continue;
+			}
+			$id = (string) ($mission['id'] ?? $mission['missionId'] ?? $mission['mission_id'] ?? '');
+			if (! $id) {
+				continue;
+			}
+			$starts_at = (string) ($mission['startsAt'] ?? $mission['starts_at'] ?? $mission['start'] ?? '');
+			$label     = sanitize_text_field((string) ($mission['title'] ?? $mission['name'] ?? $id));
+			if ($starts_at) {
+				$timestamp = strtotime($starts_at);
+				if ($timestamp) {
+					$label .= ' - ' . wp_date(get_option('date_format'), $timestamp);
+				}
+			}
+			$missions[] = array(
+				'id'   => $id,
+				'name' => $label,
+			);
+		}
+
+		return new WP_REST_Response(array('missions' => $missions), 200);
+	}
+
 	private function extract_items(array $data): array {
-		foreach (array('data', 'programs', 'items', 'results') as $key) {
+		foreach (array('data', 'programs', 'missions', 'items', 'results') as $key) {
 			if (isset($data[$key]) && is_array($data[$key])) {
 				return $data[$key];
 			}
 		}
 
 		return wp_is_numeric_array($data) ? $data : array();
+	}
+
+	private function is_public_mission(array $mission): bool {
+		$visibility = strtolower((string) ($mission['visibility'] ?? 'public'));
+		$status     = strtolower(str_replace('-', '_', (string) ($mission['status'] ?? 'open')));
+
+		return ! in_array($visibility, array('private', 'invite-only', 'internal', 'organization-only'), true)
+			&& ! in_array($status, array('private', 'expired'), true);
 	}
 
 	private function valid_signature(string $signature, string $body, string $secret): bool {

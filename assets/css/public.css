@@ -74,6 +74,28 @@
 	margin: 0;
 }
 
+.aidorbit-mission-options {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	gap: 1rem;
+	margin-block: 1rem;
+}
+
+.aidorbit-option-list {
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 8px;
+	padding: .875rem;
+}
+
+.aidorbit-option-list h4 {
+	margin-block: 0 .5rem;
+}
+
+.aidorbit-option-list ul {
+	margin-block: 0;
+	padding-inline-start: 1.25rem;
+}
+
 .aidorbit-button,
 .aidorbit-finder-form button {
 	display: inline-flex;
