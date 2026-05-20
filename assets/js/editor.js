@@ -182,6 +182,14 @@
 				skill: { type: 'string', default: '' },
 				age: { type: 'string', default: '' },
 				eligibility: { type: 'string', default: '' },
+				roleFilter: { type: 'string', default: '' },
+				missionType: { type: 'string', default: '' },
+				status: { type: 'string', default: '' },
+				availability: { type: 'string', default: '' },
+				startDate: { type: 'string', default: '' },
+				endDate: { type: 'string', default: '' },
+				distance: { type: 'string', default: '' },
+				schema: { type: 'string', default: '' },
 				shift: { type: 'string', default: '' },
 				role: { type: 'string', default: '' },
 				redirect: { type: 'string', default: '' },
@@ -218,6 +226,19 @@
 		{ label: __('Open to new Volunteers', 'aidorbit'), value: 'open' },
 		{ label: __('Requirements listed', 'aidorbit'), value: 'requirements' }
 	];
+	var statusOptions = [
+		{ label: __('Any status', 'aidorbit'), value: '' },
+		{ label: __('Open', 'aidorbit'), value: 'open' },
+		{ label: __('Waitlist available', 'aidorbit'), value: 'waitlist' },
+		{ label: __('Approval required', 'aidorbit'), value: 'approval_required' },
+		{ label: __('Requirements needed', 'aidorbit'), value: 'requirements_blocked' },
+		{ label: __('Full', 'aidorbit'), value: 'full' }
+	];
+	var availabilityOptions = [
+		{ label: __('Any availability', 'aidorbit'), value: '' },
+		{ label: __('Open slots', 'aidorbit'), value: 'available' },
+		{ label: __('Waitlist', 'aidorbit'), value: 'waitlist' }
+	];
 	var boolOptions = [
 		{ label: __('Default', 'aidorbit'), value: '' },
 		{ label: __('Yes', 'aidorbit'), value: 'yes' },
@@ -227,6 +248,9 @@
 	register('aidorbit/program-schedule', __('AidOrbit Program Schedule', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'range', label: __('Date range', 'aidorbit') },
+		{ name: 'startDate', label: __('Start date', 'aidorbit') },
+		{ name: 'endDate', label: __('End date', 'aidorbit') },
+		{ name: 'status', label: __('Status', 'aidorbit'), type: 'select', options: statusOptions },
 		{ name: 'view', label: __('View', 'aidorbit'), type: 'select', options: layoutOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
@@ -239,7 +263,14 @@
 		{ name: 'virtual', label: __('Format', 'aidorbit'), type: 'select', options: formatOptions },
 		{ name: 'familyFriendly', label: __('Family friendly', 'aidorbit'), type: 'select', options: familyOptions },
 		{ name: 'skill', label: __('Skill', 'aidorbit') },
+		{ name: 'roleFilter', label: __('Role', 'aidorbit') },
+		{ name: 'missionType', label: __('Mission type', 'aidorbit') },
+		{ name: 'status', label: __('Status', 'aidorbit'), type: 'select', options: statusOptions },
+		{ name: 'availability', label: __('Availability', 'aidorbit'), type: 'select', options: availabilityOptions },
 		{ name: 'age', label: __('Minimum age', 'aidorbit') },
+		{ name: 'startDate', label: __('Start date', 'aidorbit') },
+		{ name: 'endDate', label: __('End date', 'aidorbit') },
+		{ name: 'distance', label: __('Distance in miles', 'aidorbit') },
 		{ name: 'eligibility', label: __('Eligibility', 'aidorbit'), type: 'select', options: eligibilityOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
@@ -247,12 +278,14 @@
 	register('aidorbit/featured-missions', __('AidOrbit Featured Missions', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'layout', label: __('Layout', 'aidorbit'), type: 'select', options: layoutOptions },
+		{ name: 'status', label: __('Status', 'aidorbit'), type: 'select', options: statusOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
 
 	register('aidorbit/mission-detail', __('AidOrbit Mission Detail', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
-		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' }
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'schema', label: __('Structured metadata', 'aidorbit'), type: 'select', options: boolOptions }
 	]);
 
 	register('aidorbit/register-cta', __('AidOrbit Register CTA', 'aidorbit'), [
@@ -272,6 +305,8 @@
 
 	register('aidorbit/organization-portal', __('AidOrbit Organization Portal', 'aidorbit'), [
 		{ name: 'view', label: __('View', 'aidorbit'), type: 'select', options: layoutOptions },
+		{ name: 'status', label: __('Status', 'aidorbit'), type: 'select', options: statusOptions },
+		{ name: 'availability', label: __('Availability', 'aidorbit'), type: 'select', options: availabilityOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
 

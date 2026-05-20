@@ -14,11 +14,13 @@ Use this guide if you manage a nonprofit WordPress site and need to publish live
 4. Enter the Mission Control URL used for volunteer sign-in and registration redirects.
 5. Enter the AidOrbit organization ID.
 6. Paste an AidOrbit API token scoped to the organization or Programs this site can publish.
-7. Paste a webhook secret for cache invalidation.
-8. Choose public cache TTLs.
-9. Choose an accent color that works with the active WordPress theme.
-10. Save settings.
-11. Run Test connection.
+7. Optionally enter allowed Program IDs, one per line, when the site should publish only a subset of token-authorized Programs.
+8. Paste a webhook secret for cache invalidation.
+9. Choose public cache TTLs.
+10. Choose an accent color that works with the active WordPress theme.
+11. Choose whether aggregate analytics are enabled.
+12. Save settings.
+13. Run Test connection.
 
 API tokens and webhook secrets are write-only in the settings screen. They are stored in non-autoloaded WordPress options and are not printed back into admin HTML.
 
@@ -28,9 +30,11 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 
 - Volunteer Missions: an organization-wide Mission discovery page.
 - Volunteer Dashboard: a sign-in entry point for Volunteers.
+- My Schedule: a focused Volunteer schedule sign-in entry point.
 - Volunteer Impact: a public impact counter page.
 - Volunteer Check-In: a QR-friendly AidOrbit check-in entry point.
 - Volunteer Thank You: post-service impact and recognition entry points.
+- Program pages: one draft Program portal and schedule page for each configured allowed Program ID.
 
 Review and publish the drafts when the page title, URL, and surrounding site content are ready.
 
@@ -38,7 +42,7 @@ Review and publish the drafts when the page title, URL, and surrounding site con
 
 When the plugin is connected, Program-aware blocks load authorized Programs into the block sidebar. Editors can select a Program from the list or paste a Program ID manually when troubleshooting or preparing content before the connection is available.
 
-The picker is scoped by the saved AidOrbit token and organization ID. It does not expose API tokens to the browser.
+The picker is scoped by the saved AidOrbit token, organization ID, and optional allowed Program list. It does not expose API tokens to the browser.
 
 Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Check-In, Feedback Form, and Requirements Checklist blocks.
 
@@ -56,8 +60,14 @@ For early integrations, the endpoint also accepts the shared secret in the `x-ai
 
 The plugin does not store authoritative Volunteer profile, registration, eligibility, document, waiver, form, hour, attendance, feedback, or recognition data in WordPress. Public Mission and Program responses may be cached in WordPress transients. Personalized Volunteer dashboard, check-in, feedback, and recognition surfaces redirect to AidOrbit-hosted flows.
 
+## Aggregate Analytics
+
+When analytics are enabled, the plugin records daily aggregate counts for public block views, Mission detail views, registration starts, waitlist starts, and filter searches. It does not store Volunteer identity, browser identifiers, IP addresses, or request user agents in these counters.
+
+Developers can listen to the `aidorbit_analytics_signal` action to forward privacy-safe conversion signals to an approved analytics system.
+
 ## Diagnostics
 
-Settings > AidOrbit shows recent connection, cache, and API diagnostics. Diagnostic entries redact tokens, secrets, email addresses, phone numbers, and document-related fields before storing them in WordPress.
+Settings > AidOrbit shows setup status, aggregate analytics, recent connection, cache, webhook, and API diagnostics. Diagnostic entries redact tokens, secrets, email addresses, phone numbers, and document-related fields before storing them in WordPress.
 
 Use Download diagnostics to export a redacted JSON support bundle. The export indicates whether secrets are saved, but it does not include token or webhook secret values.

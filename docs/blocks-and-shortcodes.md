@@ -16,7 +16,7 @@ Shortcode:
 
 Use this on a Program page to show upcoming public Missions for a specific Program.
 
-Supported views are list, calendar, grid, and compact.
+Supported views are list, calendar, grid, and compact. Date controls support next 7 days, next 14 days, next 30 days, current month, next 90 days, and custom start/end dates when supported by the AidOrbit API.
 
 ## Mission Finder
 
@@ -30,7 +30,7 @@ Shortcode:
 
 Use this when visitors need to search and browse public Missions.
 
-Mission Finder supports visitor-facing keyword, location, date range, format, family-friendly, skill, minimum-age, and eligibility filters. The filters use `aidorbit_keyword`, `aidorbit_location`, `aidorbit_range`, `aidorbit_virtual`, `aidorbit_family_friendly`, `aidorbit_skill`, `aidorbit_age`, and `aidorbit_eligibility` query parameters.
+Mission Finder supports visitor-facing keyword, location, date range, custom start/end dates, format, family-friendly, skill, role, Mission type, status, availability, distance, minimum-age, and eligibility filters. The filters use `aidorbit_keyword`, `aidorbit_location`, `aidorbit_range`, `aidorbit_start`, `aidorbit_end`, `aidorbit_virtual`, `aidorbit_family_friendly`, `aidorbit_skill`, `aidorbit_role`, `aidorbit_type`, `aidorbit_status`, `aidorbit_availability`, `aidorbit_distance`, `aidorbit_age`, and `aidorbit_eligibility` query parameters.
 
 ## Featured Missions
 
@@ -56,7 +56,9 @@ Shortcode:
 
 Use this on a dedicated Mission page. Private, invite-only, internal, organization-only, or expired Missions are not rendered for public display.
 
-When AidOrbit returns public shift or role options, Mission Detail displays them as read-only summaries. Registration still routes through AidOrbit so capacity, eligibility, duplicate registration, and waitlist rules are enforced at submission time.
+When AidOrbit returns public shift or role options, Mission Detail displays them as read-only summaries. It also displays public capacity, registration deadline, minimum age, Mission type, and directions links when those fields are returned. Registration still routes through AidOrbit so capacity, eligibility, duplicate registration, and waitlist rules are enforced at submission time.
+
+Set `schema="yes"` to emit crawl-safe structured metadata for public Mission pages.
 
 ## Register CTA
 

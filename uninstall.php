@@ -13,3 +13,4 @@ delete_option('aidorbit_settings');
 delete_option('aidorbit_api_token');
 delete_option('aidorbit_cache_version');
 delete_option('aidorbit_diagnostics');
+delete_option('aidorbit_analytics_counts');

@@ -38,12 +38,28 @@ final class AidOrbit_Blocks {
 			AIDORBIT_VERSION,
 			true
 		);
+		wp_register_script(
+			'aidorbit-public',
+			AIDORBIT_PLUGIN_URL . 'assets/js/public.js',
+			array(),
+			AIDORBIT_VERSION,
+			true
+		);
 		wp_add_inline_script(
 			'aidorbit-blocks-editor',
 			'window.aidOrbitEditor = ' . wp_json_encode(
 				array(
 					'programsPath' => '/aidorbit/v1/programs',
 					'missionsPath' => '/aidorbit/v1/missions',
+				)
+			) . ';',
+			'before'
+		);
+		wp_add_inline_script(
+			'aidorbit-public',
+			'window.aidOrbitPublic = ' . wp_json_encode(
+				array(
+					'analyticsPath' => rest_url('aidorbit/v1/analytics'),
 				)
 			) . ';',
 			'before'
@@ -291,6 +307,14 @@ final class AidOrbit_Blocks {
 			'skill'    => array('type' => 'string', 'default' => ''),
 			'age'      => array('type' => 'string', 'default' => ''),
 			'eligibility' => array('type' => 'string', 'default' => ''),
+			'roleFilter' => array('type' => 'string', 'default' => ''),
+			'missionType' => array('type' => 'string', 'default' => ''),
+			'status'   => array('type' => 'string', 'default' => ''),
+			'availability' => array('type' => 'string', 'default' => ''),
+			'startDate' => array('type' => 'string', 'default' => ''),
+			'endDate'  => array('type' => 'string', 'default' => ''),
+			'distance' => array('type' => 'string', 'default' => ''),
+			'schema'   => array('type' => 'string', 'default' => ''),
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
 			'redirect' => array('type' => 'string', 'default' => ''),

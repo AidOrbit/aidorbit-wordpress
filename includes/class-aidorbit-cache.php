@@ -36,6 +36,7 @@ final class AidOrbit_Cache {
 	public function clear_public_cache(): void {
 		$version = absint(get_option(self::VERSION_OPTION, 1));
 		update_option(self::VERSION_OPTION, $version + 1, false);
+		$this->settings->update_runtime_status(array('cache_last_cleared' => gmdate('c')));
 	}
 
 	private function key(string $namespace, array $args): string {

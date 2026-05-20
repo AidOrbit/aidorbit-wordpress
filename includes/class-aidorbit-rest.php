@@ -54,6 +54,22 @@ final class AidOrbit_Rest {
 				'permission_callback' => array($this, 'authorize_editor'),
 			)
 		);
+
+		register_rest_route(
+			'aidorbit/v1',
+			'/analytics',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array($this, 'analytics'),
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'type' => array(
+						'type'     => 'string',
+						'required' => true,
+					),
+				),
+			)
+		);
 	}
 
 	public function authorize_editor(): bool {
@@ -81,6 +97,7 @@ final class AidOrbit_Rest {
 
 	public function handle_webhook(WP_REST_Request $request): WP_REST_Response {
 		$this->cache->clear_public_cache();
+		$this->settings->update_runtime_status(array('webhook_last_seen' => gmdate('c')));
 		AidOrbit_Diagnostics::record('cache', __('Public cache cleared by AidOrbit webhook.', 'aidorbit'), array('type' => $request->get_param('type')));
 
 		return new WP_REST_Response(
@@ -105,12 +122,16 @@ final class AidOrbit_Rest {
 		}
 
 		$programs = array();
+		$allowed  = $this->api_client->allowed_program_ids();
 		foreach ($this->extract_items($data) as $program) {
 			if (! is_array($program)) {
 				continue;
 			}
 			$id = (string) ($program['id'] ?? $program['programId'] ?? $program['program_id'] ?? '');
 			if (! $id) {
+				continue;
+			}
+			if ($allowed && ! in_array($id, $allowed, true)) {
 				continue;
 			}
 			$programs[] = array(
@@ -128,6 +149,9 @@ final class AidOrbit_Rest {
 			'range'   => sanitize_text_field((string) ($request->get_param('range') ?: '90d')),
 			'limit'   => 100,
 		);
+		if ($query['program'] && ! $this->api_client->program_allowed($query['program'])) {
+			return new WP_Error('aidorbit_program_forbidden', __('This Program is not enabled for this WordPress site.', 'aidorbit'), array('status' => 403));
+		}
 		$data  = $this->cache->get_or_set(
 			'mission_options',
 			$query,
@@ -162,6 +186,40 @@ final class AidOrbit_Rest {
 		}
 
 		return new WP_REST_Response(array('missions' => $missions), 200);
+	}
+
+	public function analytics(WP_REST_Request $request): WP_REST_Response {
+		if ('yes' !== $this->settings->get('analytics_enabled', 'yes')) {
+			return new WP_REST_Response(array('ok' => true, 'recorded' => false), 200);
+		}
+
+		$type = sanitize_key((string) $request->get_param('type'));
+		if (! in_array($type, array('block_view', 'mission_detail_view', 'registration_start', 'waitlist_start', 'filter_search'), true)) {
+			return new WP_REST_Response(array('ok' => false), 400);
+		}
+
+		$date   = gmdate('Y-m-d');
+		$counts = get_option('aidorbit_analytics_counts', array());
+		if (! is_array($counts)) {
+			$counts = array();
+		}
+		$counts[$date] ??= array();
+		$counts[$date][$type] = absint($counts[$date][$type] ?? 0) + 1;
+		ksort($counts);
+		$counts = array_slice($counts, -90, null, true);
+		update_option('aidorbit_analytics_counts', $counts, false);
+
+		do_action(
+			'aidorbit_analytics_signal',
+			$type,
+			array(
+				'program' => sanitize_text_field((string) $request->get_param('program')),
+				'mission' => sanitize_text_field((string) $request->get_param('mission')),
+				'url'     => esc_url_raw((string) $request->get_param('url')),
+			)
+		);
+
+		return new WP_REST_Response(array('ok' => true, 'recorded' => true), 200);
 	}
 
 	private function extract_items(array $data): array {

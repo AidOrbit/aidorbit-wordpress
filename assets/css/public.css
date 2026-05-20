@@ -54,6 +54,18 @@
 	color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
+.aidorbit-empty-state {
+	display: grid;
+	gap: .5rem;
+	padding: 1rem;
+	border: 1px dashed color-mix(in srgb, currentColor 22%, transparent);
+	border-radius: 8px;
+}
+
+.aidorbit-empty-state p {
+	margin: 0;
+}
+
 .aidorbit-facts {
 	display: grid;
 	gap: .5rem;

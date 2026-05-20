@@ -10,7 +10,7 @@ Turn a WordPress site into a live, secure AidOrbit-powered volunteer portal.
 
 == Description ==
 
-AidOrbit embeds public Program schedules, Mission discovery, featured Missions, Mission details, registration CTAs, and Program portals from AidOrbit into WordPress. AidOrbit remains the source of truth for visibility, capacity, eligibility, registration, and volunteer privacy.
+AidOrbit embeds public Program schedules, Mission discovery, featured Missions, Mission details, registration CTAs, and Program portals from AidOrbit into WordPress. AidOrbit remains the source of truth for visibility, capacity, eligibility, registration, and volunteer privacy. The plugin also supports optional allowed Program scoping, webhook cache invalidation, redacted diagnostics, and privacy-safe aggregate analytics.
 
 Initial MVP surfaces:
 
@@ -50,7 +50,7 @@ Settings > AidOrbit also includes redacted diagnostics for connection, API, webh
 
 == Privacy ==
 
-The plugin does not store authoritative Mission, registration, eligibility, document, hours, attendance, feedback, or Volunteer profile data in WordPress. Public block data may be cached in WordPress transients. Personalized Volunteer surfaces redirect to AidOrbit-hosted flows.
+The plugin does not store authoritative Mission, registration, eligibility, document, hours, attendance, feedback, or Volunteer profile data in WordPress. Public block data may be cached in WordPress transients. Personalized Volunteer surfaces redirect to AidOrbit-hosted flows. Optional analytics store aggregate daily counts only.
 
 == Changelog ==
 

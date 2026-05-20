@@ -32,6 +32,12 @@ final class AidOrbit_Api_Client {
 		return $this->request('/programs', $query);
 	}
 
+	public function allowed_program_ids(): array {
+		$programs = $this->settings->get('allowed_programs', array());
+
+		return is_array($programs) ? array_values(array_filter(array_map('strval', $programs))) : array();
+	}
+
 	public function program_portal(string $program_id): array|WP_Error {
 		return $this->request('/programs/' . rawurlencode($program_id) . '/portal');
 	}
@@ -41,6 +47,9 @@ final class AidOrbit_Api_Client {
 		unset($query['program']);
 
 		if ($program_id) {
+			if (! $this->program_allowed($program_id)) {
+				return new WP_Error('aidorbit_program_forbidden', __('This Program is not enabled for this WordPress site.', 'aidorbit'));
+			}
 			return $this->request('/programs/' . rawurlencode($program_id) . '/missions', $query);
 		}
 
@@ -50,6 +59,12 @@ final class AidOrbit_Api_Client {
 		}
 
 		return $this->request('/missions', $query);
+	}
+
+	public function program_allowed(string $program_id): bool {
+		$allowed = $this->allowed_program_ids();
+
+		return ! $allowed || in_array($program_id, $allowed, true);
 	}
 
 	public function mission(string $mission_id): array|WP_Error {
