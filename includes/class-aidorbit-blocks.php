@@ -109,6 +109,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Add to Calendar', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'add_to_calendar'),
 			),
+			'aidorbit/share-mission' => array(
+				'title'           => __('AidOrbit Share Mission', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'share_mission'),
+			),
 			'aidorbit/organization-profile' => array(
 				'title'           => __('AidOrbit Organization Profile', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'organization_profile'),
@@ -219,6 +223,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_mission_detail', array($this, 'shortcode_mission_detail'));
 		add_shortcode('aidorbit_register_button', array($this, 'shortcode_register_cta'));
 		add_shortcode('aidorbit_add_to_calendar', array($this, 'shortcode_add_to_calendar'));
+		add_shortcode('aidorbit_share_mission', array($this, 'shortcode_share_mission'));
 		add_shortcode('aidorbit_organization_profile', array($this, 'shortcode_organization_profile'));
 		add_shortcode('aidorbit_donation_cta', array($this, 'shortcode_donation_cta'));
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
@@ -264,6 +269,10 @@ final class AidOrbit_Blocks {
 
 	public function shortcode_add_to_calendar(mixed $atts): string {
 		return $this->renderer->add_to_calendar($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_share_mission(mixed $atts): string {
+		return $this->renderer->share_mission($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_organization_profile(mixed $atts): string {
@@ -380,6 +389,7 @@ final class AidOrbit_Blocks {
 			'teamSize' => array('type' => 'number', 'default' => 0),
 			'minorConsent' => array('type' => 'string', 'default' => ''),
 			'donateUrl' => array('type' => 'string', 'default' => ''),
+			'shareUrl' => array('type' => 'string', 'default' => ''),
 			'metrics'  => array('type' => 'string', 'default' => 'hours,volunteers,missions'),
 		);
 	}
@@ -414,6 +424,8 @@ final class AidOrbit_Blocks {
 			'donate_url' => 'donateUrl',
 			'donationurl' => 'donateUrl',
 			'donation_url' => 'donateUrl',
+			'shareurl' => 'shareUrl',
+			'share_url' => 'shareUrl',
 		);
 		$normalized = array();
 		foreach ($atts as $key => $value) {

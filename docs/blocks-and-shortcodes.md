@@ -84,6 +84,18 @@ Shortcode:
 
 Use this on Mission detail or campaign pages when visitors should save a public Mission to their calendar before or after registration. The block builds a Google Calendar handoff from the public Mission date, title, location, and registration URL; AidOrbit remains the system of record for registration, capacity, attendance, and schedule updates.
 
+## Share Mission
+
+Block: AidOrbit Share Mission
+
+Shortcode:
+
+```text
+[aidorbit_share_mission mission="12345"]
+```
+
+Use this on Mission detail, campaign, and partner landing pages when visitors should send a public Mission to someone else. The block renders email, Facebook, LinkedIn, and X sharing links from the selected Mission and the current page URL. Use `shareUrl="https://example.org/volunteer"` when the share destination should be a campaign-specific page instead.
+
 ## Organization Profile
 
 Block: AidOrbit Organization Profile

@@ -236,6 +236,13 @@
 	color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
+.aidorbit-share-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem 1rem;
+	align-items: center;
+}
+
 .aidorbit-finder-form {
 	display: flex;
 	flex-wrap: wrap;

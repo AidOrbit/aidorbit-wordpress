@@ -312,6 +312,67 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	public function share_mission(array $attributes): string {
+		$this->enqueue_assets();
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $this->notice(__('Select a Mission before showing sharing options.', 'aidorbit'));
+		}
+
+		$data = $this->cache->get_or_set(
+			'share_mission',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('This Mission is not available for public sharing.', 'aidorbit'));
+		}
+
+		$title = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
+		$share_url = $this->share_url($mission, $attributes);
+		$message = sprintf(
+			/* translators: %s is a Mission title. */
+			__('Share %s with someone who may want to volunteer.', 'aidorbit'),
+			$title
+		);
+		$links = array(
+			'email' => array(
+				'label' => __('Email', 'aidorbit'),
+				'url'   => 'mailto:?subject=' . rawurlencode($title) . '&body=' . rawurlencode($message . "\n\n" . $share_url),
+			),
+			'facebook' => array(
+				'label' => __('Facebook', 'aidorbit'),
+				'url'   => add_query_arg('u', $share_url, 'https://www.facebook.com/sharer/sharer.php'),
+			),
+			'linkedin' => array(
+				'label' => __('LinkedIn', 'aidorbit'),
+				'url'   => add_query_arg('url', $share_url, 'https://www.linkedin.com/sharing/share-offsite/'),
+			),
+			'x' => array(
+				'label' => __('X', 'aidorbit'),
+				'url'   => add_query_arg(array('text' => $title, 'url' => $share_url), 'https://twitter.com/intent/tweet'),
+			),
+		);
+
+		$html  = '<section class="aidorbit-surface aidorbit-share-mission">';
+		$html .= '<h2>' . esc_html__('Share this Mission', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html($message) . '</p>';
+		$html .= '<div class="aidorbit-share-links">';
+		foreach ($links as $link) {
+			$html .= '<a class="aidorbit-link" href="' . esc_url($link['url']) . '">' . esc_html($link['label']) . '</a>';
+		}
+		$html .= '</div>';
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function program_portal(array $attributes): string {
 		$this->enqueue_assets();
 		$program_id = sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? ''));
@@ -1015,6 +1076,25 @@ final class AidOrbit_Renderer {
 			),
 			'https://calendar.google.com/calendar/render'
 		);
+	}
+
+	private function share_url(array $mission, array $attributes): string {
+		$override = (string) ($attributes['shareUrl'] ?? $attributes['share_url'] ?? '');
+		if ($override) {
+			return esc_url_raw($override);
+		}
+
+		$mission_url = (string) $this->field($mission, array('shareUrl', 'share_url', 'publicUrl', 'public_url', 'url'), '');
+		if ($mission_url) {
+			return esc_url_raw($mission_url);
+		}
+
+		$permalink = get_permalink();
+		if ($permalink) {
+			return esc_url_raw($permalink);
+		}
+
+		return home_url();
 	}
 
 	private function empty_state(array $attributes): string {
