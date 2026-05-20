@@ -137,6 +137,14 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit My Hours', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'my_hours'),
 			),
+			'aidorbit/recommended-missions' => array(
+				'title'           => __('AidOrbit Recommended Missions', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'recommended_missions'),
+			),
+			'aidorbit/team-registration' => array(
+				'title'           => __('AidOrbit Team Registration', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'team_registration'),
+			),
 			'aidorbit/qr-checkin' => array(
 				'title'           => __('AidOrbit QR Check-In', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'qr_checkin'),
@@ -202,6 +210,8 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_my_schedule', array($this, 'shortcode_my_schedule'));
 		add_shortcode('aidorbit_my_requirements', array($this, 'shortcode_my_requirements'));
 		add_shortcode('aidorbit_my_hours', array($this, 'shortcode_my_hours'));
+		add_shortcode('aidorbit_recommended_missions', array($this, 'shortcode_recommended_missions'));
+		add_shortcode('aidorbit_team_registration', array($this, 'shortcode_team_registration'));
 		add_shortcode('aidorbit_qr_checkin', array($this, 'shortcode_qr_checkin'));
 		add_shortcode('aidorbit_kiosk_checkin', array($this, 'shortcode_kiosk_checkin'));
 		add_shortcode('aidorbit_post_mission_feedback', array($this, 'shortcode_post_mission_feedback'));
@@ -264,6 +274,14 @@ final class AidOrbit_Blocks {
 		return $this->renderer->my_hours($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_recommended_missions(mixed $atts): string {
+		return $this->renderer->recommended_missions($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_team_registration(mixed $atts): string {
+		return $this->renderer->team_registration($this->shortcode_atts($atts));
+	}
+
 	public function shortcode_qr_checkin(mixed $atts): string {
 		return $this->renderer->qr_checkin($this->shortcode_atts($atts));
 	}
@@ -322,6 +340,9 @@ final class AidOrbit_Blocks {
 			'kiosk'    => array('type' => 'string', 'default' => ''),
 			'anonymous' => array('type' => 'string', 'default' => ''),
 			'attendanceRequired' => array('type' => 'string', 'default' => ''),
+			'teamName' => array('type' => 'string', 'default' => ''),
+			'teamSize' => array('type' => 'number', 'default' => 0),
+			'minorConsent' => array('type' => 'string', 'default' => ''),
 			'metrics'  => array('type' => 'string', 'default' => 'hours,volunteers,missions'),
 		);
 	}
@@ -346,6 +367,12 @@ final class AidOrbit_Blocks {
 			'end_date' => 'endDate',
 			'attendancerequired' => 'attendanceRequired',
 			'attendance_required' => 'attendanceRequired',
+			'teamname' => 'teamName',
+			'team_name' => 'teamName',
+			'teamsize' => 'teamSize',
+			'team_size' => 'teamSize',
+			'minorconsent' => 'minorConsent',
+			'minor_consent' => 'minorConsent',
 		);
 		$normalized = array();
 		foreach ($atts as $key => $value) {

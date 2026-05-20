@@ -31,6 +31,8 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 - Volunteer Missions: an organization-wide Mission discovery page.
 - Volunteer Dashboard: a sign-in entry point for Volunteers.
 - My Schedule: a focused Volunteer schedule sign-in entry point.
+- Recommended Missions: a focused sign-in entry point for personalized Mission recommendations.
+- Team Registration: an AidOrbit-hosted group, family, partner, or team registration entry point.
 - Volunteer Impact: a public impact counter page.
 - Volunteer Check-In: a QR-friendly AidOrbit check-in entry point.
 - Volunteer Thank You: post-service impact and recognition entry points.

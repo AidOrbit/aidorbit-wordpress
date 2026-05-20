@@ -197,6 +197,9 @@
 				kiosk: { type: 'string', default: '' },
 				anonymous: { type: 'string', default: '' },
 				attendanceRequired: { type: 'string', default: '' },
+				teamName: { type: 'string', default: '' },
+				teamSize: { type: 'number', default: 0 },
+				minorConsent: { type: 'string', default: '' },
 				metrics: { type: 'string', default: 'hours,volunteers,missions' }
 			},
 			edit: edit(name, fields),
@@ -327,6 +330,21 @@
 	]);
 
 	register('aidorbit/my-hours', __('AidOrbit My Hours', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/recommended-missions', __('AidOrbit Recommended Missions', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/team-registration', __('AidOrbit Team Registration', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
+		{ name: 'role', label: __('Role ID', 'aidorbit') },
+		{ name: 'teamName', label: __('Team name', 'aidorbit') },
+		{ name: 'teamSize', label: __('Team size', 'aidorbit'), type: 'number' },
+		{ name: 'minorConsent', label: __('Minor consent', 'aidorbit'), type: 'select', options: boolOptions },
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 

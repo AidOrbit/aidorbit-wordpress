@@ -168,6 +168,30 @@ Shortcode:
 
 Use this as a focused sign-in entry point for hours and proof-of-service details.
 
+## Recommended Missions
+
+Block: AidOrbit Recommended Missions
+
+Shortcode:
+
+```text
+[aidorbit_recommended_missions]
+```
+
+Use this as a focused sign-in entry point for personalized Mission recommendations. Recommendations remain AidOrbit-hosted so profile matching, Program membership, requirements, and interest data are not rendered into public WordPress pages or shared caches.
+
+## Team Registration
+
+Block: AidOrbit Team Registration
+
+Shortcode:
+
+```text
+[aidorbit_team_registration mission="12345" teamSize="8" minorConsent="yes"]
+```
+
+Use this for group, family, partner, or team registration entry points. When a Mission is selected, the block opens the AidOrbit team registration flow for that Mission; otherwise it opens the general team registration flow. Capacity, eligibility, roster details, and minor consent handling remain AidOrbit-hosted.
+
 ## QR Check-In
 
 Block: AidOrbit QR Check-In

@@ -303,6 +303,31 @@ final class AidOrbit_Renderer {
 		);
 	}
 
+	public function recommended_missions(array $attributes): string {
+		$this->enqueue_assets();
+
+		return $this->volunteer_action_panel(
+			__('Recommended Missions', 'aidorbit'),
+			__('Sign in with AidOrbit to see Missions matched to your profile, Programs, requirements, and interests.', 'aidorbit'),
+			__('Open recommended Missions', 'aidorbit'),
+			'/volunteers/me/recommendations',
+			$attributes
+		);
+	}
+
+	public function team_registration(array $attributes): string {
+		$this->enqueue_assets();
+		$path = $this->mission_path($attributes, 'team-registration', '/volunteers/team-registration');
+
+		return $this->volunteer_action_panel(
+			__('Team Registration', 'aidorbit'),
+			__('Register a team, group, family, or partner crew through AidOrbit so capacity, eligibility, and consent requirements stay enforced.', 'aidorbit'),
+			__('Start team registration', 'aidorbit'),
+			$path,
+			$attributes
+		);
+	}
+
 	public function qr_checkin(array $attributes): string {
 		$this->enqueue_assets();
 		$path = $this->mission_path($attributes, 'check-in', '/check-in');
@@ -476,6 +501,9 @@ final class AidOrbit_Renderer {
 					'kiosk'      => $this->sanitize_bool_query($attributes['kiosk'] ?? ''),
 					'anonymous'  => $this->sanitize_bool_query($attributes['anonymous'] ?? ''),
 					'attendance_required' => $this->sanitize_bool_query($attributes['attendanceRequired'] ?? $attributes['attendance_required'] ?? ''),
+					'team_name'  => sanitize_text_field((string) ($attributes['teamName'] ?? $attributes['team_name'] ?? '')),
+					'team_size'  => sanitize_text_field((string) ($attributes['teamSize'] ?? $attributes['team_size'] ?? '')),
+					'minor_consent' => $this->sanitize_bool_query($attributes['minorConsent'] ?? $attributes['minor_consent'] ?? ''),
 				)
 			),
 			$base

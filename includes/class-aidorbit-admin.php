@@ -191,6 +191,14 @@ final class AidOrbit_Admin {
 				'title'   => __('My Schedule', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/my-schedule /-->',
 			),
+			'recommended-missions' => array(
+				'title'   => __('Recommended Missions', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/recommended-missions /-->',
+			),
+			'team-registration' => array(
+				'title'   => __('Team Registration', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/team-registration /-->',
+			),
 			'volunteer-impact' => array(
 				'title'   => __('Volunteer Impact', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/impact-counter {"range":"year","metrics":"hours,volunteers,missions"} /-->',
