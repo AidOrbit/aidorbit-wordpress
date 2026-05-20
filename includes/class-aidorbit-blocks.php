@@ -121,6 +121,30 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit My Hours', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'my_hours'),
 			),
+			'aidorbit/qr-checkin' => array(
+				'title'           => __('AidOrbit QR Check-In', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'qr_checkin'),
+			),
+			'aidorbit/kiosk-checkin' => array(
+				'title'           => __('AidOrbit Kiosk Check-In', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'kiosk_checkin'),
+			),
+			'aidorbit/post-mission-feedback' => array(
+				'title'           => __('AidOrbit Post-Mission Feedback', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'post_mission_feedback'),
+			),
+			'aidorbit/feedback-form' => array(
+				'title'           => __('AidOrbit Feedback Form', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'post_mission_feedback'),
+			),
+			'aidorbit/volunteer-recognition' => array(
+				'title'           => __('AidOrbit Volunteer Recognition', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'volunteer_recognition'),
+			),
+			'aidorbit/thank-you' => array(
+				'title'           => __('AidOrbit Thank You', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'thank_you'),
+			),
 			'aidorbit/requirements-checklist' => array(
 				'title'           => __('AidOrbit Requirements Checklist', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'requirements_checklist'),
@@ -162,6 +186,12 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_my_schedule', array($this, 'shortcode_my_schedule'));
 		add_shortcode('aidorbit_my_requirements', array($this, 'shortcode_my_requirements'));
 		add_shortcode('aidorbit_my_hours', array($this, 'shortcode_my_hours'));
+		add_shortcode('aidorbit_qr_checkin', array($this, 'shortcode_qr_checkin'));
+		add_shortcode('aidorbit_kiosk_checkin', array($this, 'shortcode_kiosk_checkin'));
+		add_shortcode('aidorbit_post_mission_feedback', array($this, 'shortcode_post_mission_feedback'));
+		add_shortcode('aidorbit_feedback_form', array($this, 'shortcode_post_mission_feedback'));
+		add_shortcode('aidorbit_volunteer_recognition', array($this, 'shortcode_volunteer_recognition'));
+		add_shortcode('aidorbit_thank_you', array($this, 'shortcode_thank_you'));
 		add_shortcode('aidorbit_requirements_checklist', array($this, 'shortcode_requirements_checklist'));
 		add_shortcode('aidorbit_impact_counter', array($this, 'shortcode_impact_counter'));
 	}
@@ -218,6 +248,26 @@ final class AidOrbit_Blocks {
 		return $this->renderer->my_hours($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_qr_checkin(mixed $atts): string {
+		return $this->renderer->qr_checkin($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_kiosk_checkin(mixed $atts): string {
+		return $this->renderer->kiosk_checkin($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_post_mission_feedback(mixed $atts): string {
+		return $this->renderer->post_mission_feedback($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_volunteer_recognition(mixed $atts): string {
+		return $this->renderer->volunteer_recognition($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_thank_you(mixed $atts): string {
+		return $this->renderer->thank_you($this->shortcode_atts($atts));
+	}
+
 	public function shortcode_requirements_checklist(mixed $atts): string {
 		return $this->renderer->requirements_checklist($this->shortcode_atts($atts));
 	}
@@ -244,6 +294,10 @@ final class AidOrbit_Blocks {
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
 			'redirect' => array('type' => 'string', 'default' => ''),
+			'expires'  => array('type' => 'string', 'default' => ''),
+			'kiosk'    => array('type' => 'string', 'default' => ''),
+			'anonymous' => array('type' => 'string', 'default' => ''),
+			'attendanceRequired' => array('type' => 'string', 'default' => ''),
 			'metrics'  => array('type' => 'string', 'default' => 'hours,volunteers,missions'),
 		);
 	}

@@ -281,6 +281,67 @@ final class AidOrbit_Renderer {
 		);
 	}
 
+	public function qr_checkin(array $attributes): string {
+		$this->enqueue_assets();
+		$path = $this->mission_path($attributes, 'check-in', '/check-in');
+
+		return $this->volunteer_action_panel(
+			__('Mission Check-In', 'aidorbit'),
+			__('Open AidOrbit check-in for this Mission or shift.', 'aidorbit'),
+			__('Check in with AidOrbit', 'aidorbit'),
+			$path,
+			$attributes
+		);
+	}
+
+	public function kiosk_checkin(array $attributes): string {
+		$this->enqueue_assets();
+		$path = $this->mission_path($attributes, 'kiosk-check-in', '/kiosk/check-in');
+
+		return $this->volunteer_action_panel(
+			__('Kiosk Check-In', 'aidorbit'),
+			__('Open a staff or site kiosk flow for volunteer arrivals.', 'aidorbit'),
+			__('Open check-in kiosk', 'aidorbit'),
+			$path,
+			$attributes
+		);
+	}
+
+	public function post_mission_feedback(array $attributes): string {
+		$this->enqueue_assets();
+		$path = $this->mission_path($attributes, 'feedback', '/volunteers/me/feedback');
+
+		return $this->volunteer_action_panel(
+			__('Mission Feedback', 'aidorbit'),
+			__('Share post-Mission feedback through AidOrbit.', 'aidorbit'),
+			__('Share feedback', 'aidorbit'),
+			$path,
+			$attributes
+		);
+	}
+
+	public function volunteer_recognition(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('Volunteer Recognition', 'aidorbit'),
+			__('View recognition, badges, milestones, and community appreciation in AidOrbit.', 'aidorbit'),
+			__('Open recognition', 'aidorbit'),
+			'/volunteers/me/recognition',
+			$attributes
+		);
+	}
+
+	public function thank_you(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('Thank You', 'aidorbit'),
+			__('Review your service history, impact, and next recommended Missions.', 'aidorbit'),
+			__('View my impact', 'aidorbit'),
+			'/volunteers/me/impact',
+			$attributes
+		);
+	}
+
 	public function requirements_checklist(array $attributes): string {
 		$this->enqueue_assets();
 		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
@@ -383,7 +444,29 @@ final class AidOrbit_Renderer {
 
 		$base = untrailingslashit((string) $this->settings->get('mission_control_url')) . '/' . ltrim($path, '/');
 
-		return add_query_arg(array('return_url' => esc_url_raw($redirect)), $base);
+		return add_query_arg(
+			array_filter(
+				array(
+					'return_url' => esc_url_raw($redirect),
+					'shift'      => sanitize_text_field((string) ($attributes['shift'] ?? '')),
+					'role'       => sanitize_text_field((string) ($attributes['role'] ?? '')),
+					'expires'    => sanitize_text_field((string) ($attributes['expires'] ?? '')),
+					'kiosk'      => $this->sanitize_bool_query($attributes['kiosk'] ?? ''),
+					'anonymous'  => $this->sanitize_bool_query($attributes['anonymous'] ?? ''),
+					'attendance_required' => $this->sanitize_bool_query($attributes['attendanceRequired'] ?? $attributes['attendance_required'] ?? ''),
+				)
+			),
+			$base
+		);
+	}
+
+	private function mission_path(array $attributes, string $action, string $fallback): string {
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $fallback;
+		}
+
+		return '/missions/' . rawurlencode($mission_id) . '/' . ltrim($action, '/');
 	}
 
 	private function finder_form(array $attributes): string {
@@ -632,6 +715,12 @@ final class AidOrbit_Renderer {
 		}
 
 		return (string) min(120, max(0, absint($value)));
+	}
+
+	private function sanitize_bool_query(mixed $value): string {
+		$value = sanitize_key((string) $value);
+
+		return in_array($value, array('1', 'true', 'yes'), true) ? '1' : '';
 	}
 
 	private function normalize_metrics(string $metrics): array {

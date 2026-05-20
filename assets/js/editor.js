@@ -185,6 +185,10 @@
 				shift: { type: 'string', default: '' },
 				role: { type: 'string', default: '' },
 				redirect: { type: 'string', default: '' },
+				expires: { type: 'string', default: '' },
+				kiosk: { type: 'string', default: '' },
+				anonymous: { type: 'string', default: '' },
+				attendanceRequired: { type: 'string', default: '' },
 				metrics: { type: 'string', default: 'hours,volunteers,missions' }
 			},
 			edit: edit(name, fields),
@@ -213,6 +217,11 @@
 		{ label: __('Any eligibility', 'aidorbit'), value: '' },
 		{ label: __('Open to new Volunteers', 'aidorbit'), value: 'open' },
 		{ label: __('Requirements listed', 'aidorbit'), value: 'requirements' }
+	];
+	var boolOptions = [
+		{ label: __('Default', 'aidorbit'), value: '' },
+		{ label: __('Yes', 'aidorbit'), value: 'yes' },
+		{ label: __('No', 'aidorbit'), value: 'no' }
 	];
 
 	register('aidorbit/program-schedule', __('AidOrbit Program Schedule', 'aidorbit'), [
@@ -283,6 +292,47 @@
 	]);
 
 	register('aidorbit/my-hours', __('AidOrbit My Hours', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/qr-checkin', __('AidOrbit QR Check-In', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
+		{ name: 'role', label: __('Role ID', 'aidorbit') },
+		{ name: 'expires', label: __('Expiration', 'aidorbit') },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/kiosk-checkin', __('AidOrbit Kiosk Check-In', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
+		{ name: 'kiosk', label: __('Kiosk mode', 'aidorbit'), type: 'select', options: boolOptions },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/post-mission-feedback', __('AidOrbit Post-Mission Feedback', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'anonymous', label: __('Anonymous option', 'aidorbit'), type: 'select', options: boolOptions },
+		{ name: 'attendanceRequired', label: __('Attendance required', 'aidorbit'), type: 'select', options: boolOptions },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/feedback-form', __('AidOrbit Feedback Form', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'anonymous', label: __('Anonymous option', 'aidorbit'), type: 'select', options: boolOptions },
+		{ name: 'attendanceRequired', label: __('Attendance required', 'aidorbit'), type: 'select', options: boolOptions },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/volunteer-recognition', __('AidOrbit Volunteer Recognition', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/thank-you', __('AidOrbit Thank You', 'aidorbit'), [
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 

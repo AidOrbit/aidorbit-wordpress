@@ -166,6 +166,66 @@ Shortcode:
 
 Use this as a focused sign-in entry point for hours and proof-of-service details.
 
+## QR Check-In
+
+Block: AidOrbit QR Check-In
+
+Shortcode:
+
+```text
+[aidorbit_qr_checkin mission="12345" shift="678" expires="2026-06-01T18:00:00Z"]
+```
+
+Use this on signs, QR-code landing pages, or onsite check-in pages. When a Mission is selected, the block redirects Volunteers into the AidOrbit check-in flow for that Mission. Without a Mission, it opens the general check-in flow.
+
+## Kiosk Check-In
+
+Block: AidOrbit Kiosk Check-In
+
+Shortcode:
+
+```text
+[aidorbit_kiosk_checkin mission="12345" shift="678" kiosk="yes"]
+```
+
+Use this on staff-managed tablets or onsite kiosk pages. Attendance remains AidOrbit-hosted; WordPress only renders the entry point.
+
+## Post-Mission Feedback
+
+Block: AidOrbit Feedback Form
+
+Shortcode:
+
+```text
+[aidorbit_feedback_form mission="12345" anonymous="yes" attendanceRequired="yes"]
+```
+
+Use this on thank-you pages, follow-up pages, or QR-code destinations after service. Feedback collection remains AidOrbit-hosted. `[aidorbit_post_mission_feedback]` is also registered as an alias for sites that prefer the more explicit name.
+
+## Volunteer Recognition
+
+Block: AidOrbit Volunteer Recognition
+
+Shortcode:
+
+```text
+[aidorbit_volunteer_recognition]
+```
+
+Use this as a redirect-first surface for Volunteer recognition, badges, milestones, and appreciation details.
+
+## Thank You
+
+Block: AidOrbit Thank You
+
+Shortcode:
+
+```text
+[aidorbit_thank_you]
+```
+
+Use this after registration, check-in, feedback, or campaign pages where Volunteers should continue into impact and recommended next steps.
+
 ## Requirements Checklist
 
 Block: AidOrbit Requirements Checklist

@@ -29,6 +29,8 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 - Volunteer Missions: an organization-wide Mission discovery page.
 - Volunteer Dashboard: a sign-in entry point for Volunteers.
 - Volunteer Impact: a public impact counter page.
+- Volunteer Check-In: a QR-friendly AidOrbit check-in entry point.
+- Volunteer Thank You: post-service impact and recognition entry points.
 
 Review and publish the drafts when the page title, URL, and surrounding site content are ready.
 
@@ -38,7 +40,7 @@ When the plugin is connected, Program-aware blocks load authorized Programs into
 
 The picker is scoped by the saved AidOrbit token and organization ID. It does not expose API tokens to the browser.
 
-Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail and Register CTA blocks.
+Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Check-In, Feedback Form, and Requirements Checklist blocks.
 
 ## Webhook Cache Invalidation
 
@@ -52,7 +54,7 @@ For early integrations, the endpoint also accepts the shared secret in the `x-ai
 
 ## Privacy Notes
 
-The plugin does not store authoritative Volunteer profile, registration, eligibility, document, waiver, form, hour, or attendance data in WordPress. Public Mission and Program responses may be cached in WordPress transients. Personalized Volunteer dashboard widgets are not part of this initial implementation.
+The plugin does not store authoritative Volunteer profile, registration, eligibility, document, waiver, form, hour, attendance, feedback, or recognition data in WordPress. Public Mission and Program responses may be cached in WordPress transients. Personalized Volunteer dashboard, check-in, feedback, and recognition surfaces redirect to AidOrbit-hosted flows.
 
 ## Diagnostics
 

@@ -115,6 +115,7 @@ final class AidOrbit_Admin {
 				<?php esc_html_e('Webhook endpoint:', 'aidorbit'); ?>
 				<code><?php echo esc_html(rest_url('aidorbit/v1/webhook')); ?></code>
 			</p>
+			<?php $this->render_setup_status($settings, $token); ?>
 			<?php $this->render_diagnostics(); ?>
 		</div>
 		<?php
@@ -161,6 +162,14 @@ final class AidOrbit_Admin {
 			'volunteer-impact' => array(
 				'title'   => __('Volunteer Impact', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/impact-counter {"range":"year","metrics":"hours,volunteers,missions"} /-->',
+			),
+			'volunteer-check-in' => array(
+				'title'   => __('Volunteer Check-In', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/qr-checkin /-->',
+			),
+			'volunteer-thank-you' => array(
+				'title'   => __('Volunteer Thank You', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/thank-you /-->' . "\n\n" . '<!-- wp:aidorbit/volunteer-recognition /-->',
 			),
 		);
 
@@ -298,6 +307,30 @@ final class AidOrbit_Admin {
 			<?php wp_nonce_field('aidorbit_download_diagnostics'); ?>
 			<?php submit_button(__('Download diagnostics', 'aidorbit'), 'secondary', 'submit', false); ?>
 		</form>
+		<?php
+	}
+
+	private function render_setup_status(array $settings, string $token): void {
+		$items = array(
+			__('API base URL', 'aidorbit')        => ! empty($settings['api_base_url']),
+			__('Mission Control URL', 'aidorbit') => ! empty($settings['mission_control_url']),
+			__('Organization ID', 'aidorbit')     => ! empty($settings['organization_id']),
+			__('API token', 'aidorbit')           => '' !== $token,
+			__('Webhook secret', 'aidorbit')      => ! empty($settings['webhook_secret']),
+			__('Public cache TTL', 'aidorbit')    => absint($settings['public_cache_ttl'] ?? 0) >= 30,
+		);
+		?>
+		<h2><?php esc_html_e('Setup status', 'aidorbit'); ?></h2>
+		<table class="widefat striped" style="max-width:720px;">
+			<tbody>
+				<?php foreach ($items as $label => $complete) : ?>
+					<tr>
+						<th scope="row"><?php echo esc_html($label); ?></th>
+						<td><?php echo esc_html($complete ? __('Configured', 'aidorbit') : __('Needs attention', 'aidorbit')); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 }

@@ -27,6 +27,12 @@ Initial MVP surfaces:
 * AidOrbit My Schedule block and `[aidorbit_my_schedule]`
 * AidOrbit My Requirements block and `[aidorbit_my_requirements]`
 * AidOrbit My Hours block and `[aidorbit_my_hours]`
+* AidOrbit QR Check-In block and `[aidorbit_qr_checkin]`
+* AidOrbit Kiosk Check-In block and `[aidorbit_kiosk_checkin]`
+* AidOrbit Feedback Form block and `[aidorbit_feedback_form]`
+* AidOrbit Post-Mission Feedback block and `[aidorbit_post_mission_feedback]` alias
+* AidOrbit Volunteer Recognition block and `[aidorbit_volunteer_recognition]`
+* AidOrbit Thank You block and `[aidorbit_thank_you]`
 * AidOrbit Requirements Checklist block and `[aidorbit_requirements_checklist]`
 * AidOrbit Impact Counter block and `[aidorbit_impact_counter]`
 
@@ -44,7 +50,7 @@ Settings > AidOrbit also includes redacted diagnostics for connection, API, webh
 
 == Privacy ==
 
-The plugin does not store authoritative Mission, registration, eligibility, document, hours, or Volunteer profile data in WordPress. Public block data may be cached in WordPress transients. Personalized Volunteer surfaces are intentionally not included in this initial implementation.
+The plugin does not store authoritative Mission, registration, eligibility, document, hours, attendance, feedback, or Volunteer profile data in WordPress. Public block data may be cached in WordPress transients. Personalized Volunteer surfaces redirect to AidOrbit-hosted flows.
 
 == Changelog ==
 
