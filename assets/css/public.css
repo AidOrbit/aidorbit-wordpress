@@ -45,6 +45,36 @@
 	color: CanvasText;
 }
 
+.aidorbit-programs {
+	display: grid;
+	gap: 1rem;
+}
+
+.aidorbit-programs-grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.aidorbit-programs-compact {
+	gap: .5rem;
+}
+
+.aidorbit-program-card {
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 8px;
+	background: Canvas;
+	color: CanvasText;
+}
+
+.aidorbit-program-card__body {
+	display: grid;
+	gap: .75rem;
+	padding: 1rem;
+}
+
+.aidorbit-program-card__body p {
+	margin-block: 0;
+}
+
 .aidorbit-mission-card__body {
 	padding: 1rem;
 }

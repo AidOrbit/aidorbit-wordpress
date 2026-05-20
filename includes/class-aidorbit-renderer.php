@@ -79,6 +79,45 @@ final class AidOrbit_Renderer {
 		return $this->mission_list($data, $attributes, __('Featured Missions', 'aidorbit'));
 	}
 
+	public function program_directory(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$query      = array(
+			'limit' => $attributes['limit'],
+		);
+		$data       = $this->cache->get_or_set('program_directory', $query, fn () => $this->api_client->programs($query));
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$programs = array_values(
+			array_filter(
+				$this->extract_items($data),
+				function ($program): bool {
+					if (! is_array($program)) {
+						return false;
+					}
+					$id = (string) $this->field($program, array('id', 'programId', 'program_id'), '');
+
+					return '' !== $id && $this->api_client->program_allowed($id);
+				}
+			)
+		);
+		if (! $programs) {
+			return $this->notice(__('No Programs are available for public display right now.', 'aidorbit'));
+		}
+
+		$layout = sanitize_html_class((string) ($attributes['view'] ?: $attributes['layout'] ?: 'grid'));
+		$html   = '<section class="aidorbit-surface aidorbit-program-directory"><h2>' . esc_html__('Programs', 'aidorbit') . '</h2>';
+		$html  .= '<div class="aidorbit-programs aidorbit-programs-' . esc_attr($layout) . '">';
+		foreach ($programs as $program) {
+			$html .= $this->program_card($program, $attributes);
+		}
+		$html .= '</div></section>';
+
+		return $html;
+	}
+
 	public function mission_detail(array $attributes): string {
 		$this->enqueue_assets();
 		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
@@ -636,6 +675,28 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	private function program_card(array $program, array $attributes): string {
+		$id      = (string) $this->field($program, array('id', 'programId', 'program_id'), '');
+		$title   = $this->field($program, array('name', 'title'), __('Program', 'aidorbit'));
+		$summary = $this->field($program, array('summary', 'description'), '');
+		$url     = (string) $this->field($program, array('url', 'publicUrl', 'public_url', 'portalUrl', 'portal_url'), '');
+		if (! $url && $id) {
+			$url = $this->mission_control_url('/programs/' . rawurlencode($id), $attributes);
+		}
+
+		$html  = '<article class="aidorbit-program-card">';
+		$html .= '<div class="aidorbit-program-card__body"><h3>' . esc_html((string) $title) . '</h3>';
+		if ($summary) {
+			$html .= '<p>' . esc_html((string) $summary) . '</p>';
+		}
+		if ($url) {
+			$html .= '<a class="aidorbit-link" href="' . esc_url($url) . '">' . esc_html__('View Program', 'aidorbit') . '</a>';
+		}
+		$html .= '</div></article>';
+
+		return $html;
+	}
+
 	private function mission_card(array $mission, array $options = array()): string {
 		$title        = $this->field($mission, array('title', 'name'), __('Untitled Mission', 'aidorbit'));
 		$id           = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), '');
@@ -951,7 +1012,7 @@ final class AidOrbit_Renderer {
 	}
 
 	private function extract_items(array $data): array {
-		foreach (array('data', 'missions', 'items', 'results') as $key) {
+		foreach (array('data', 'missions', 'programs', 'items', 'results') as $key) {
 			if (isset($data[$key]) && is_array($data[$key])) {
 				return $data[$key];
 			}

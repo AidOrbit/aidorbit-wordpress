@@ -109,6 +109,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Program Portal', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'program_portal'),
 			),
+			'aidorbit/program-directory' => array(
+				'title'           => __('AidOrbit Program Directory', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'program_directory'),
+			),
 			'aidorbit/contact-program-staff' => array(
 				'title'           => __('AidOrbit Contact Program Staff', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'contact_program_staff'),
@@ -203,6 +207,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_mission_detail', array($this, 'shortcode_mission_detail'));
 		add_shortcode('aidorbit_register_button', array($this, 'shortcode_register_cta'));
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
+		add_shortcode('aidorbit_program_directory', array($this, 'shortcode_program_directory'));
 		add_shortcode('aidorbit_contact_program_staff', array($this, 'shortcode_contact_program_staff'));
 		add_shortcode('aidorbit_org_portal', array($this, 'shortcode_organization_portal'));
 		add_shortcode('aidorbit_volunteer_login', array($this, 'shortcode_volunteer_login'));
@@ -244,6 +249,10 @@ final class AidOrbit_Blocks {
 
 	public function shortcode_program_portal(mixed $atts): string {
 		return $this->renderer->program_portal($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_program_directory(mixed $atts): string {
+		return $this->renderer->program_directory($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_contact_program_staff(mixed $atts): string {

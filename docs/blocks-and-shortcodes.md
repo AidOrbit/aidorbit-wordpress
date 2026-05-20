@@ -84,6 +84,18 @@ Shortcode:
 
 Use this as a Program landing page with Program summary, contact routing, and upcoming Missions.
 
+## Program Directory
+
+Block: AidOrbit Program Directory
+
+Shortcode:
+
+```text
+[aidorbit_program_directory view="grid" limit="12"]
+```
+
+Use this when a WordPress site needs a public directory of authorized Programs. The block uses the saved AidOrbit API key, organization ID, and optional allowed Program list; Program CTAs route to AidOrbit so authoritative Program pages and volunteer actions stay in Mission Control.
+
 ## Contact Program Staff
 
 Block: AidOrbit Contact Program Staff

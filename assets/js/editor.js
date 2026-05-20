@@ -302,6 +302,11 @@
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
 	]);
 
+	register('aidorbit/program-directory', __('AidOrbit Program Directory', 'aidorbit'), [
+		{ name: 'view', label: __('View', 'aidorbit'), type: 'select', options: layoutOptions },
+		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
+	]);
+
 	register('aidorbit/contact-program-staff', __('AidOrbit Contact Program Staff', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
 	]);
