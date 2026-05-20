@@ -798,6 +798,11 @@ final class AidOrbit_Renderer {
 	}
 
 	private function registration_url(string $mission_id, array $attributes): string {
+		$mission_url = (string) ($attributes['registrationUrl'] ?? $attributes['registration_url'] ?? $attributes['publicSignupUrl'] ?? $attributes['public_signup_url'] ?? '');
+		if ($mission_url) {
+			return esc_url_raw($mission_url);
+		}
+
 		$base = untrailingslashit((string) $this->settings->get('mission_control_url')) . '/missions/' . rawurlencode($mission_id) . '/register';
 
 		return add_query_arg(
@@ -815,7 +820,7 @@ final class AidOrbit_Renderer {
 	private function registration_cta(array $mission, array $attributes): string {
 		$id     = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), (string) ($attributes['mission'] ?? ''));
 		$status = $this->normalized_status((string) $this->field($mission, array('registrationStatus', 'registration_status', 'status'), 'open'));
-		$url    = $this->registration_url($id, $attributes);
+		$url    = $this->registration_url($id, array_merge($attributes, $mission));
 
 		$labels = array(
 			'open'                 => __('Register', 'aidorbit'),

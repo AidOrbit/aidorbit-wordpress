@@ -10,10 +10,10 @@ Use this guide if you manage a nonprofit WordPress site and need to publish live
 
 1. Install and activate the AidOrbit plugin.
 2. Open Settings > AidOrbit.
-3. Enter the AidOrbit API base URL.
+3. Enter the AidOrbit API base URL. New installs default to the WordPress contract at `/mission-control/api/v1/wordpress`.
 4. Enter the Mission Control URL used for volunteer sign-in and registration redirects.
 5. Enter the AidOrbit organization ID.
-6. Paste an AidOrbit API token scoped to the organization or Programs this site can publish.
+6. Paste an AidOrbit API key scoped to the organization or Programs this site can publish. The key should include `missions.read`; add `reports.read` or `hours.read` when using Impact Counter blocks.
 7. Optionally enter allowed Program IDs, one per line, when the site should publish only a subset of token-authorized Programs.
 8. Paste a webhook secret for cache invalidation.
 9. Choose public cache TTLs.

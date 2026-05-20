@@ -40,7 +40,7 @@ Initial MVP surfaces:
 
 1. Activate the plugin.
 2. Open Settings > AidOrbit.
-3. Enter the AidOrbit API base URL, Mission Control URL, organization ID, API token, public cache TTLs, and webhook secret.
+3. Enter the AidOrbit API base URL, Mission Control URL, organization ID, API key, public cache TTLs, and webhook secret. New installs default to `/mission-control/api/v1/wordpress`.
 4. Test the connection.
 5. Optionally create starter pages as drafts.
 6. Add AidOrbit blocks to pages, or use the shortcode fallbacks.

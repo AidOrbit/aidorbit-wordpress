@@ -327,6 +327,32 @@ final class AidOrbit_Blocks {
 	}
 
 	private function shortcode_atts(mixed $atts): array {
-		return is_array($atts) ? $atts : array();
+		if (! is_array($atts)) {
+			return array();
+		}
+
+		$aliases = array(
+			'programid' => 'programId',
+			'missionid' => 'missionId',
+			'familyfriendly' => 'familyFriendly',
+			'family_friendly' => 'familyFriendly',
+			'rolefilter' => 'roleFilter',
+			'role_filter' => 'roleFilter',
+			'missiontype' => 'missionType',
+			'mission_type' => 'missionType',
+			'startdate' => 'startDate',
+			'start_date' => 'startDate',
+			'enddate' => 'endDate',
+			'end_date' => 'endDate',
+			'attendancerequired' => 'attendanceRequired',
+			'attendance_required' => 'attendanceRequired',
+		);
+		$normalized = array();
+		foreach ($atts as $key => $value) {
+			$key = (string) $key;
+			$normalized[$aliases[$key] ?? $key] = $value;
+		}
+
+		return $normalized;
 	}
 }

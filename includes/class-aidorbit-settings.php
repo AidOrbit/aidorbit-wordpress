@@ -15,7 +15,7 @@ final class AidOrbit_Settings {
 
 	public static function defaults(): array {
 		return array(
-			'api_base_url'           => 'https://app.aidorbit.com/mission-control/api/v1',
+			'api_base_url'           => 'https://app.aidorbit.com/mission-control/api/v1/wordpress',
 			'organization_id'        => '',
 			'allowed_programs'       => array(),
 			'public_cache_ttl'       => 300,
