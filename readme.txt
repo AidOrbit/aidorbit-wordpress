@@ -20,6 +20,8 @@ Initial MVP surfaces:
 * AidOrbit Mission Detail block and `[aidorbit_mission_detail]`
 * AidOrbit Register CTA block and `[aidorbit_register_button]`
 * AidOrbit Program Portal block and `[aidorbit_program_portal]`
+* AidOrbit Organization Portal block and `[aidorbit_org_portal]`
+* AidOrbit Volunteer Login block and `[aidorbit_volunteer_login]`
 
 == Setup ==
 
@@ -27,7 +29,10 @@ Initial MVP surfaces:
 2. Open Settings > AidOrbit.
 3. Enter the AidOrbit API base URL, Mission Control URL, organization ID, API token, public cache TTLs, and webhook secret.
 4. Test the connection.
-5. Add AidOrbit blocks to pages, or use the shortcode fallbacks.
+5. Optionally create starter pages as drafts.
+6. Add AidOrbit blocks to pages, or use the shortcode fallbacks.
+
+Additional setup and publishing guidance is available in `docs/setup.md` and `docs/blocks-and-shortcodes.md`.
 
 == Privacy ==
 

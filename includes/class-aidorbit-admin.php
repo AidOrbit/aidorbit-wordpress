@@ -25,6 +25,7 @@ final class AidOrbit_Admin {
 		add_action('admin_post_aidorbit_save_settings', array($this, 'save_settings'));
 		add_action('admin_post_aidorbit_clear_cache', array($this, 'clear_cache'));
 		add_action('admin_post_aidorbit_test_connection', array($this, 'test_connection'));
+		add_action('admin_post_aidorbit_create_pages', array($this, 'create_pages'));
 	}
 
 	public function add_menu(): void {
@@ -99,6 +100,11 @@ final class AidOrbit_Admin {
 				<?php wp_nonce_field('aidorbit_clear_cache'); ?>
 				<?php submit_button(__('Clear public cache', 'aidorbit'), 'secondary', 'submit', false); ?>
 			</form>
+			<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display:inline-block;margin-left:8px;">
+				<input type="hidden" name="action" value="aidorbit_create_pages">
+				<?php wp_nonce_field('aidorbit_create_pages'); ?>
+				<?php submit_button(__('Create starter pages', 'aidorbit'), 'secondary', 'submit', false); ?>
+			</form>
 			<p>
 				<?php esc_html_e('Webhook endpoint:', 'aidorbit'); ?>
 				<code><?php echo esc_html(rest_url('aidorbit/v1/webhook')); ?></code>
@@ -130,6 +136,38 @@ final class AidOrbit_Admin {
 		$this->redirect('connection-ok');
 	}
 
+	public function create_pages(): void {
+		$this->assert_admin_action('aidorbit_create_pages');
+
+		$pages = array(
+			'volunteer-missions' => array(
+				'title'   => __('Volunteer Missions', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/organization-portal {"view":"grid","limit":12} /-->',
+			),
+			'volunteer-dashboard' => array(
+				'title'   => __('Volunteer Dashboard', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/volunteer-login /-->',
+			),
+		);
+
+		foreach ($pages as $slug => $page) {
+			if (get_page_by_path($slug)) {
+				continue;
+			}
+			wp_insert_post(
+				array(
+					'post_title'   => $page['title'],
+					'post_name'    => $slug,
+					'post_status'  => 'draft',
+					'post_type'    => 'page',
+					'post_content' => $page['content'],
+				)
+			);
+		}
+
+		$this->redirect('pages-created');
+	}
+
 	private function assert_admin_action(string $nonce_action): void {
 		if (! current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have permission to manage AidOrbit settings.', 'aidorbit'));
@@ -153,6 +191,7 @@ final class AidOrbit_Admin {
 			'cache-cleared'      => __('AidOrbit public cache cleared.', 'aidorbit'),
 			'connection-ok'      => __('AidOrbit connection succeeded.', 'aidorbit'),
 			'connection-failed'  => __('AidOrbit connection failed. Check the API URL, token, and organization scope.', 'aidorbit'),
+			'pages-created'      => __('AidOrbit starter pages created as drafts.', 'aidorbit'),
 		);
 		$class = 'connection-failed' === $message ? 'notice notice-error' : 'notice notice-success';
 

@@ -55,7 +55,7 @@ final class AidOrbit_Rest {
 			array(
 				'ok'      => true,
 				'cleared' => true,
-				'event'   => sanitize_text_field((string) $request->get_param('event')),
+				'type'    => sanitize_text_field((string) $request->get_param('type')),
 			),
 			200
 		);

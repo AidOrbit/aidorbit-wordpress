@@ -47,12 +47,7 @@ final class AidOrbit_Renderer {
 		);
 		$data       = $this->cache->get_or_set('mission_finder', $query, fn () => $this->api_client->missions($query));
 
-		$search = '<form class="aidorbit-finder-form" role="search" method="get">'
-			. '<label><span class="screen-reader-text">' . esc_html__('Search Missions', 'aidorbit') . '</span>'
-			. '<input type="search" name="aidorbit_keyword" value="' . esc_attr($attributes['keyword']) . '" placeholder="' . esc_attr__('Search Missions', 'aidorbit') . '"></label>'
-			. '<button type="submit">' . esc_html__('Search', 'aidorbit') . '</button></form>';
-
-		return '<div class="aidorbit-surface aidorbit-mission-finder">' . $search . $this->mission_list_inner($data, $attributes) . '</div>';
+		return '<div class="aidorbit-surface aidorbit-mission-finder">' . $this->finder_form($attributes) . $this->mission_list_inner($data, $attributes) . '</div>';
 	}
 
 	public function featured_missions(array $attributes): string {
@@ -95,9 +90,17 @@ final class AidOrbit_Renderer {
 			return $this->notice(__('Select a Mission before showing a registration button.', 'aidorbit'));
 		}
 
-		$url = $this->registration_url($mission_id, $attributes);
+		$data = $this->cache->get_or_set('register_cta', array('mission' => $mission_id), fn () => $this->api_client->mission($mission_id));
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
 
-		return '<div class="aidorbit-register-cta"><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Register for this Mission', 'aidorbit') . '</a></div>';
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('This Mission is not available for public registration.', 'aidorbit'));
+		}
+
+		return '<div class="aidorbit-register-cta">' . $this->registration_cta($mission, $attributes) . '</div>';
 	}
 
 	public function program_portal(array $attributes): string {
@@ -114,7 +117,14 @@ final class AidOrbit_Renderer {
 
 		$title       = $this->field($portal, array('name', 'title'), __('Program Portal', 'aidorbit'));
 		$summary     = $this->field($portal, array('summary', 'description'), '');
-		$missions    = $this->program_schedule(array('program' => $program_id, 'limit' => 6, 'view' => 'grid'));
+		$mission_query = array(
+			'program' => $program_id,
+			'range'   => '30d',
+			'status'  => 'public',
+			'limit'   => 6,
+			'view'    => 'grid',
+		);
+		$missions      = $this->cache->get_or_set('program_portal_missions', $mission_query, fn () => $this->api_client->missions($mission_query));
 		$contact_url = esc_url($this->field($portal, array('contactUrl', 'contact_url'), ''));
 
 		$html  = '<section class="aidorbit-surface aidorbit-program-portal">';
@@ -125,9 +135,44 @@ final class AidOrbit_Renderer {
 		if ($contact_url) {
 			$html .= '<a class="aidorbit-link" href="' . $contact_url . '">' . esc_html__('Contact Program Staff', 'aidorbit') . '</a>';
 		}
-		$html .= '</div>' . $missions . '</section>';
+		$html .= '</div><h3>' . esc_html__('Upcoming Missions', 'aidorbit') . '</h3>' . $this->mission_list_inner($missions, array('view' => 'grid')) . '</section>';
 
 		return $html;
+	}
+
+	public function organization_portal(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$attributes['view'] = $attributes['view'] ?: 'grid';
+		$query      = array(
+			'program'  => $attributes['program'],
+			'keyword'  => $attributes['keyword'],
+			'location' => $attributes['location'],
+			'range'    => $attributes['range'],
+			'limit'    => $attributes['limit'],
+		);
+		$data       = $this->cache->get_or_set('organization_portal', $query, fn () => $this->api_client->missions($query));
+
+		$html  = '<section class="aidorbit-surface aidorbit-organization-portal">';
+		$html .= '<div class="aidorbit-portal-header"><h2>' . esc_html__('Volunteer Missions', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html__('Find upcoming Missions and choose a way to help.', 'aidorbit') . '</p></div>';
+		$html .= $this->finder_form($attributes) . $this->mission_list_inner($data, $attributes);
+		$html .= '</section>';
+
+		return $html;
+	}
+
+	public function volunteer_login(array $attributes): string {
+		$this->enqueue_assets();
+		$redirect = (string) ($attributes['redirect'] ?? '');
+		if (! $redirect) {
+			$redirect = get_permalink() ?: home_url();
+		}
+		$redirect = esc_url_raw($redirect);
+		$base     = untrailingslashit((string) $this->settings->get('mission_control_url')) . '/login';
+		$url      = add_query_arg(array('return_url' => $redirect), $base);
+
+		return '<div class="aidorbit-surface aidorbit-volunteer-login"><h2>' . esc_html__('Volunteer Dashboard', 'aidorbit') . '</h2><p>' . esc_html__('Sign in with AidOrbit to view your schedule, requirements, hours, and Mission updates.', 'aidorbit') . '</p><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Sign in to AidOrbit', 'aidorbit') . '</a></div>';
 	}
 
 	private function mission_list(array|WP_Error $data, array $attributes, string $heading): string {
@@ -136,6 +181,13 @@ final class AidOrbit_Renderer {
 		}
 
 		return '<section class="aidorbit-surface aidorbit-mission-list"><h2>' . esc_html($heading) . '</h2>' . $this->mission_list_inner($data, $attributes) . '</section>';
+	}
+
+	private function finder_form(array $attributes): string {
+		return '<form class="aidorbit-finder-form" role="search" method="get">'
+			. '<label><span class="screen-reader-text">' . esc_html__('Search Missions', 'aidorbit') . '</span>'
+			. '<input type="search" name="aidorbit_keyword" value="' . esc_attr((string) ($attributes['keyword'] ?? '')) . '" placeholder="' . esc_attr__('Search Missions', 'aidorbit') . '"></label>'
+			. '<button type="submit">' . esc_html__('Search', 'aidorbit') . '</button></form>';
 	}
 
 	private function mission_list_inner(array|WP_Error $data, array $attributes): string {
@@ -165,11 +217,13 @@ final class AidOrbit_Renderer {
 		$summary      = $this->field($mission, array('summary', 'description'), '');
 		$starts_at    = $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
 		$location     = $this->field($mission, array('locationName', 'location_name', 'location'), __('Location provided after registration', 'aidorbit'));
-		$status       = $this->field($mission, array('registrationStatus', 'status'), 'open');
+		$status       = $this->normalized_status((string) $this->field($mission, array('registrationStatus', 'registration_status', 'status'), 'open'));
 		$requirements = $this->field($mission, array('requirementsSummary', 'requirements_summary'), '');
 		$capacity     = $this->field($mission, array('capacitySummary', 'capacity_summary'), '');
+		$is_virtual   = (bool) $this->field($mission, array('isVirtual', 'is_virtual', 'virtual'), false);
+		$contact      = $this->field($mission, array('contactName', 'contact_name', 'contact'), '');
 
-		$html  = '<article class="aidorbit-mission-card">';
+		$html  = '<article class="aidorbit-mission-card aidorbit-status-' . esc_attr(sanitize_html_class($status)) . '">';
 		$html .= '<div class="aidorbit-mission-card__body">';
 		$html .= '<h3>' . esc_html($title) . '</h3>';
 		if ($starts_at) {
@@ -179,7 +233,7 @@ final class AidOrbit_Renderer {
 			$html .= '<p>' . esc_html($summary) . '</p>';
 		}
 		$html .= '<dl class="aidorbit-facts">';
-		$html .= '<div><dt>' . esc_html__('Location', 'aidorbit') . '</dt><dd>' . esc_html(is_array($location) ? ($location['name'] ?? '') : (string) $location) . '</dd></div>';
+		$html .= '<div><dt>' . esc_html__('Location', 'aidorbit') . '</dt><dd>' . esc_html($is_virtual ? __('Virtual', 'aidorbit') : (is_array($location) ? ($location['name'] ?? '') : (string) $location)) . '</dd></div>';
 		$html .= '<div><dt>' . esc_html__('Status', 'aidorbit') . '</dt><dd>' . esc_html($this->status_label((string) $status)) . '</dd></div>';
 		if ($capacity) {
 			$html .= '<div><dt>' . esc_html__('Capacity', 'aidorbit') . '</dt><dd>' . esc_html((string) $capacity) . '</dd></div>';
@@ -187,9 +241,12 @@ final class AidOrbit_Renderer {
 		if ($requirements) {
 			$html .= '<div><dt>' . esc_html__('Requirements', 'aidorbit') . '</dt><dd>' . esc_html((string) $requirements) . '</dd></div>';
 		}
+		if (! empty($options['detail']) && $contact) {
+			$html .= '<div><dt>' . esc_html__('Contact', 'aidorbit') . '</dt><dd>' . esc_html(is_array($contact) ? ($contact['name'] ?? '') : (string) $contact) . '</dd></div>';
+		}
 		$html .= '</dl>';
-		if ($id && ! in_array((string) $status, array('canceled', 'cancelled', 'closed', 'private'), true)) {
-			$html .= '<a class="aidorbit-button" href="' . esc_url($this->registration_url($id, array())) . '">' . esc_html__('Register', 'aidorbit') . '</a>';
+		if ($id) {
+			$html .= $this->registration_cta($mission, array());
 		}
 		$html .= '</div></article>';
 
@@ -209,6 +266,30 @@ final class AidOrbit_Renderer {
 			),
 			$base
 		);
+	}
+
+	private function registration_cta(array $mission, array $attributes): string {
+		$id     = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), (string) ($attributes['mission'] ?? ''));
+		$status = $this->normalized_status((string) $this->field($mission, array('registrationStatus', 'registration_status', 'status'), 'open'));
+		$url    = $this->registration_url($id, $attributes);
+
+		$labels = array(
+			'open'                 => __('Register', 'aidorbit'),
+			'waitlist'             => __('Join waitlist', 'aidorbit'),
+			'approval_required'    => __('Request approval', 'aidorbit'),
+			'requirements_blocked' => __('View requirements', 'aidorbit'),
+			'full'                 => __('Mission is full', 'aidorbit'),
+			'canceled'             => __('Mission canceled', 'aidorbit'),
+			'closed'               => __('Registration closed', 'aidorbit'),
+		);
+		$label    = $labels[$status] ?? __('Register', 'aidorbit');
+		$disabled = in_array($status, array('full', 'canceled', 'closed'), true);
+
+		if ($disabled) {
+			return '<span class="aidorbit-button aidorbit-button--disabled" aria-disabled="true">' . esc_html($label) . '</span>';
+		}
+
+		return '<a class="aidorbit-button aidorbit-button--' . esc_attr(sanitize_html_class($status)) . '" href="' . esc_url($url) . '">' . esc_html($label) . '</a>';
 	}
 
 	private function normalize_attributes(array $attributes): array {
@@ -244,7 +325,7 @@ final class AidOrbit_Renderer {
 
 	private function is_public_mission(array $mission): bool {
 		$visibility = strtolower((string) $this->field($mission, array('visibility'), 'public'));
-		$status     = strtolower((string) $this->field($mission, array('status'), 'open'));
+		$status     = $this->normalized_status((string) $this->field($mission, array('status'), 'open'));
 
 		return ! in_array($visibility, array('private', 'invite-only', 'internal', 'organization-only'), true)
 			&& ! in_array($status, array('private', 'expired'), true);
@@ -270,6 +351,7 @@ final class AidOrbit_Renderer {
 	}
 
 	private function status_label(string $status): string {
+		$status = $this->normalized_status($status);
 		$labels = array(
 			'open'                 => __('Open', 'aidorbit'),
 			'full'                 => __('Full', 'aidorbit'),
@@ -282,6 +364,21 @@ final class AidOrbit_Renderer {
 		);
 
 		return $labels[$status] ?? ucwords(str_replace(array('-', '_'), ' ', $status));
+	}
+
+	private function normalized_status(string $status): string {
+		$status = strtolower(str_replace('-', '_', $status));
+		if ('cancelled' === $status) {
+			return 'canceled';
+		}
+		if (in_array($status, array('approval', 'approval_required', 'requires_approval'), true)) {
+			return 'approval_required';
+		}
+		if (in_array($status, array('blocked', 'requirements_blocked', 'requirements_needed'), true)) {
+			return 'requirements_blocked';
+		}
+
+		return $status;
 	}
 
 	private function notice(string $message, bool $error = false): string {

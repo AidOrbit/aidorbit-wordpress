@@ -121,4 +121,13 @@
 	register('aidorbit/program-portal', __('AidOrbit Program Portal', 'aidorbit'), [
 		{ name: 'program', label: __('Program ID', 'aidorbit') }
 	]);
+
+	register('aidorbit/organization-portal', __('AidOrbit Organization Portal', 'aidorbit'), [
+		{ name: 'view', label: __('View', 'aidorbit'), type: 'select', options: layoutOptions },
+		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
+	]);
+
+	register('aidorbit/volunteer-login', __('AidOrbit Volunteer Login', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
 })(window.wp.blocks, window.wp.element, window.wp.components, window.wp.blockEditor, window.wp.serverSideRender, window.wp.i18n);

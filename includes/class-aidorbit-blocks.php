@@ -65,6 +65,14 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Program Portal', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'program_portal'),
 			),
+			'aidorbit/organization-portal' => array(
+				'title'           => __('AidOrbit Organization Portal', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'organization_portal'),
+			),
+			'aidorbit/volunteer-login' => array(
+				'title'           => __('AidOrbit Volunteer Login', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'volunteer_login'),
+			),
 		);
 
 		foreach ($blocks as $name => $definition) {
@@ -91,6 +99,8 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_mission_detail', array($this, 'shortcode_mission_detail'));
 		add_shortcode('aidorbit_register_button', array($this, 'shortcode_register_cta'));
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
+		add_shortcode('aidorbit_org_portal', array($this, 'shortcode_organization_portal'));
+		add_shortcode('aidorbit_volunteer_login', array($this, 'shortcode_volunteer_login'));
 	}
 
 	public function shortcode_program_schedule(mixed $atts): string {
@@ -117,6 +127,14 @@ final class AidOrbit_Blocks {
 		return $this->renderer->program_portal($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_organization_portal(mixed $atts): string {
+		return $this->renderer->organization_portal($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_volunteer_login(mixed $atts): string {
+		return $this->renderer->volunteer_login($this->shortcode_atts($atts));
+	}
+
 	private function attributes(): array {
 		return array(
 			'program'  => array('type' => 'string', 'default' => ''),
@@ -129,6 +147,7 @@ final class AidOrbit_Blocks {
 			'location' => array('type' => 'string', 'default' => ''),
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
+			'redirect' => array('type' => 'string', 'default' => ''),
 		);
 	}
 
