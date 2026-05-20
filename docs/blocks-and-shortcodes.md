@@ -82,6 +82,18 @@ Shortcode:
 
 Use this as a Program landing page with Program summary, contact routing, and upcoming Missions.
 
+## Contact Program Staff
+
+Block: AidOrbit Contact Program Staff
+
+Shortcode:
+
+```text
+[aidorbit_contact_program_staff program="food-pantry"]
+```
+
+Use this when a page needs a focused contact path without rendering a full Program portal. Contact routing comes from AidOrbit Program portal data, and the block does not expose private staff contact details unless AidOrbit returns a public contact URL or label.
+
 ## Organization Portal
 
 Block: AidOrbit Organization Portal
@@ -105,6 +117,66 @@ Shortcode:
 ```
 
 Use this as the sign-in entry point for Volunteers. Initial dashboard widgets are redirect-first and remain AidOrbit-hosted.
+
+## Volunteer Dashboard
+
+Block: AidOrbit Volunteer Dashboard
+
+Shortcode:
+
+```text
+[aidorbit_volunteer_dashboard]
+```
+
+Use this as a redirect-first dashboard landing surface. It links Volunteers to AidOrbit-hosted schedule, requirements, hours, and recommendation views, so personalized data is not rendered into public WordPress pages or shared caches.
+
+## My Schedule
+
+Block: AidOrbit My Schedule
+
+Shortcode:
+
+```text
+[aidorbit_my_schedule]
+```
+
+Use this as a focused sign-in entry point for upcoming Mission schedule details.
+
+## My Requirements
+
+Block: AidOrbit My Requirements
+
+Shortcode:
+
+```text
+[aidorbit_my_requirements]
+```
+
+Use this as a focused sign-in entry point for waivers, forms, training, and other readiness steps.
+
+## My Hours
+
+Block: AidOrbit My Hours
+
+Shortcode:
+
+```text
+[aidorbit_my_hours]
+```
+
+Use this as a focused sign-in entry point for hours and proof-of-service details.
+
+## Requirements Checklist
+
+Block: AidOrbit Requirements Checklist
+
+Shortcode:
+
+```text
+[aidorbit_requirements_checklist mission="12345"]
+```
+
+Use this to show public Mission requirement summaries when AidOrbit returns them. Personalized completion status remains AidOrbit-hosted and is reached through the requirements CTA.
 
 ## Impact Counter
 

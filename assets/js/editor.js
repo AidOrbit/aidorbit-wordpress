@@ -257,12 +257,38 @@
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
 	]);
 
+	register('aidorbit/contact-program-staff', __('AidOrbit Contact Program Staff', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
+	]);
+
 	register('aidorbit/organization-portal', __('AidOrbit Organization Portal', 'aidorbit'), [
 		{ name: 'view', label: __('View', 'aidorbit'), type: 'select', options: layoutOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
 
 	register('aidorbit/volunteer-login', __('AidOrbit Volunteer Login', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/volunteer-dashboard', __('AidOrbit Volunteer Dashboard', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/my-schedule', __('AidOrbit My Schedule', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/my-requirements', __('AidOrbit My Requirements', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/my-hours', __('AidOrbit My Hours', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/requirements-checklist', __('AidOrbit Requirements Checklist', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 

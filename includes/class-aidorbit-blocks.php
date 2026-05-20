@@ -93,6 +93,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Program Portal', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'program_portal'),
 			),
+			'aidorbit/contact-program-staff' => array(
+				'title'           => __('AidOrbit Contact Program Staff', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'contact_program_staff'),
+			),
 			'aidorbit/organization-portal' => array(
 				'title'           => __('AidOrbit Organization Portal', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'organization_portal'),
@@ -100,6 +104,26 @@ final class AidOrbit_Blocks {
 			'aidorbit/volunteer-login' => array(
 				'title'           => __('AidOrbit Volunteer Login', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'volunteer_login'),
+			),
+			'aidorbit/volunteer-dashboard' => array(
+				'title'           => __('AidOrbit Volunteer Dashboard', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'volunteer_dashboard'),
+			),
+			'aidorbit/my-schedule' => array(
+				'title'           => __('AidOrbit My Schedule', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'my_schedule'),
+			),
+			'aidorbit/my-requirements' => array(
+				'title'           => __('AidOrbit My Requirements', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'my_requirements'),
+			),
+			'aidorbit/my-hours' => array(
+				'title'           => __('AidOrbit My Hours', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'my_hours'),
+			),
+			'aidorbit/requirements-checklist' => array(
+				'title'           => __('AidOrbit Requirements Checklist', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'requirements_checklist'),
 			),
 			'aidorbit/impact-counter' => array(
 				'title'           => __('AidOrbit Impact Counter', 'aidorbit'),
@@ -131,8 +155,14 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_mission_detail', array($this, 'shortcode_mission_detail'));
 		add_shortcode('aidorbit_register_button', array($this, 'shortcode_register_cta'));
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
+		add_shortcode('aidorbit_contact_program_staff', array($this, 'shortcode_contact_program_staff'));
 		add_shortcode('aidorbit_org_portal', array($this, 'shortcode_organization_portal'));
 		add_shortcode('aidorbit_volunteer_login', array($this, 'shortcode_volunteer_login'));
+		add_shortcode('aidorbit_volunteer_dashboard', array($this, 'shortcode_volunteer_dashboard'));
+		add_shortcode('aidorbit_my_schedule', array($this, 'shortcode_my_schedule'));
+		add_shortcode('aidorbit_my_requirements', array($this, 'shortcode_my_requirements'));
+		add_shortcode('aidorbit_my_hours', array($this, 'shortcode_my_hours'));
+		add_shortcode('aidorbit_requirements_checklist', array($this, 'shortcode_requirements_checklist'));
 		add_shortcode('aidorbit_impact_counter', array($this, 'shortcode_impact_counter'));
 	}
 
@@ -160,12 +190,36 @@ final class AidOrbit_Blocks {
 		return $this->renderer->program_portal($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_contact_program_staff(mixed $atts): string {
+		return $this->renderer->contact_program_staff($this->shortcode_atts($atts));
+	}
+
 	public function shortcode_organization_portal(mixed $atts): string {
 		return $this->renderer->organization_portal($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_volunteer_login(mixed $atts): string {
 		return $this->renderer->volunteer_login($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_volunteer_dashboard(mixed $atts): string {
+		return $this->renderer->volunteer_dashboard($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_my_schedule(mixed $atts): string {
+		return $this->renderer->my_schedule($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_my_requirements(mixed $atts): string {
+		return $this->renderer->my_requirements($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_my_hours(mixed $atts): string {
+		return $this->renderer->my_hours($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_requirements_checklist(mixed $atts): string {
+		return $this->renderer->requirements_checklist($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_impact_counter(mixed $atts): string {

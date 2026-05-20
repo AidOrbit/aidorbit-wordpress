@@ -156,6 +156,40 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	public function contact_program_staff(array $attributes): string {
+		$this->enqueue_assets();
+		$program_id = sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? ''));
+		if (! $program_id) {
+			return $this->notice(__('Select a Program before showing contact options.', 'aidorbit'));
+		}
+
+		$portal = $this->cache->get_or_set('program_contact', array('program' => $program_id), fn () => $this->api_client->program_portal($program_id));
+		if (is_wp_error($portal)) {
+			return $this->notice($portal->get_error_message(), true);
+		}
+
+		$program_name = $this->field($portal, array('name', 'title'), __('Program Staff', 'aidorbit'));
+		$contact_name = $this->field($portal, array('contactName', 'contact_name', 'contactLabel', 'contact_label'), '');
+		$contact_url  = esc_url($this->field($portal, array('contactUrl', 'contact_url'), ''));
+		$summary      = $this->field($portal, array('contactSummary', 'contact_summary'), '');
+
+		if (! $contact_url) {
+			return $this->notice(__('Contact routing is not available for this Program.', 'aidorbit'));
+		}
+
+		$html  = '<section class="aidorbit-surface aidorbit-contact-staff">';
+		$html .= '<h2>' . esc_html__('Contact Program Staff', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html($summary ?: sprintf(
+			/* translators: %s is a Program name. */
+			__('Send a message about %s through AidOrbit.', 'aidorbit'),
+			(string) $program_name
+		)) . '</p>';
+		$html .= '<a class="aidorbit-button" href="' . $contact_url . '">' . esc_html($contact_name ?: __('Contact Program Staff', 'aidorbit')) . '</a>';
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function organization_portal(array $attributes): string {
 		$this->enqueue_assets();
 		$attributes = $this->normalize_attributes($attributes);
@@ -185,15 +219,118 @@ final class AidOrbit_Renderer {
 
 	public function volunteer_login(array $attributes): string {
 		$this->enqueue_assets();
-		$redirect = (string) ($attributes['redirect'] ?? '');
-		if (! $redirect) {
-			$redirect = get_permalink() ?: home_url();
-		}
-		$redirect = esc_url_raw($redirect);
-		$base     = untrailingslashit((string) $this->settings->get('mission_control_url')) . '/login';
-		$url      = add_query_arg(array('return_url' => $redirect), $base);
+		return $this->volunteer_action_panel(
+			__('Volunteer Dashboard', 'aidorbit'),
+			__('Sign in with AidOrbit to view your schedule, requirements, hours, and Mission updates.', 'aidorbit'),
+			__('Sign in to AidOrbit', 'aidorbit'),
+			'/login',
+			$attributes
+		);
+	}
 
-		return '<div class="aidorbit-surface aidorbit-volunteer-login"><h2>' . esc_html__('Volunteer Dashboard', 'aidorbit') . '</h2><p>' . esc_html__('Sign in with AidOrbit to view your schedule, requirements, hours, and Mission updates.', 'aidorbit') . '</p><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Sign in to AidOrbit', 'aidorbit') . '</a></div>';
+	public function volunteer_dashboard(array $attributes): string {
+		$this->enqueue_assets();
+		$tiles = array(
+			array(__('My Schedule', 'aidorbit'), __('Review upcoming Missions and registration status.', 'aidorbit'), '/volunteers/me/schedule'),
+			array(__('My Requirements', 'aidorbit'), __('Complete waivers, forms, training, and other readiness steps.', 'aidorbit'), '/volunteers/me/requirements'),
+			array(__('My Hours', 'aidorbit'), __('View submitted hours and proof-of-service details.', 'aidorbit'), '/volunteers/me/hours'),
+			array(__('Recommended Missions', 'aidorbit'), __('Find Missions that match your profile and interests.', 'aidorbit'), '/volunteers/me/recommendations'),
+		);
+
+		$html  = '<section class="aidorbit-surface aidorbit-volunteer-dashboard"><h2>' . esc_html__('Volunteer Dashboard', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html__('Sign in with AidOrbit to manage your volunteer activity securely.', 'aidorbit') . '</p>';
+		$html .= '<div class="aidorbit-dashboard-tiles">';
+		foreach ($tiles as $tile) {
+			$html .= '<a class="aidorbit-dashboard-tile" href="' . esc_url($this->mission_control_url($tile[2], $attributes)) . '"><strong>' . esc_html($tile[0]) . '</strong><span>' . esc_html($tile[1]) . '</span></a>';
+		}
+		$html .= '</div></section>';
+
+		return $html;
+	}
+
+	public function my_schedule(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('My Schedule', 'aidorbit'),
+			__('Sign in to view your upcoming Missions, shifts, and registration status.', 'aidorbit'),
+			__('Open my schedule', 'aidorbit'),
+			'/volunteers/me/schedule',
+			$attributes
+		);
+	}
+
+	public function my_requirements(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('My Requirements', 'aidorbit'),
+			__('Sign in to complete waivers, forms, training, and other readiness steps.', 'aidorbit'),
+			__('Open my requirements', 'aidorbit'),
+			'/volunteers/me/requirements',
+			$attributes
+		);
+	}
+
+	public function my_hours(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('My Hours', 'aidorbit'),
+			__('Sign in to view submitted hours and proof-of-service details.', 'aidorbit'),
+			__('Open my hours', 'aidorbit'),
+			'/volunteers/me/hours',
+			$attributes
+		);
+	}
+
+	public function requirements_checklist(array $attributes): string {
+		$this->enqueue_assets();
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $this->volunteer_action_panel(
+				__('My Requirements', 'aidorbit'),
+				__('Sign in to view your personalized readiness checklist.', 'aidorbit'),
+				__('Open my requirements', 'aidorbit'),
+				'/volunteers/me/requirements',
+				$attributes
+			);
+		}
+
+		$data = $this->cache->get_or_set(
+			'requirements_checklist',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('Requirements are not available for this Mission.', 'aidorbit'));
+		}
+
+		$requirements = $this->field($mission, array('requirements', 'publicRequirements', 'public_requirements'), array());
+		$summary      = $this->field($mission, array('requirementsSummary', 'requirements_summary'), '');
+		$url          = $this->mission_control_url('/missions/' . rawurlencode($mission_id) . '/requirements', $attributes);
+
+		$html  = '<section class="aidorbit-surface aidorbit-requirements-checklist"><h2>' . esc_html__('Mission Requirements', 'aidorbit') . '</h2>';
+		if ($summary) {
+			$html .= '<p>' . esc_html((string) $summary) . '</p>';
+		}
+		if (is_array($requirements) && $requirements) {
+			$html .= '<ul class="aidorbit-requirements-list">';
+			foreach ($requirements as $requirement) {
+				$label = is_array($requirement)
+					? (string) ($requirement['name'] ?? $requirement['title'] ?? $requirement['label'] ?? __('Requirement', 'aidorbit'))
+					: (string) $requirement;
+				$html .= '<li>' . esc_html($label) . '</li>';
+			}
+			$html .= '</ul>';
+		}
+		$html .= '<a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Review requirements in AidOrbit', 'aidorbit') . '</a>';
+		$html .= '</section>';
+
+		return $html;
 	}
 
 	public function impact_counter(array $attributes): string {
@@ -230,6 +367,23 @@ final class AidOrbit_Renderer {
 		}
 
 		return '<section class="aidorbit-surface aidorbit-mission-list"><h2>' . esc_html($heading) . '</h2>' . $this->mission_list_inner($data, $attributes) . '</section>';
+	}
+
+	private function volunteer_action_panel(string $title, string $copy, string $button, string $path, array $attributes): string {
+		$url = $this->mission_control_url($path, $attributes);
+
+		return '<section class="aidorbit-surface aidorbit-volunteer-action"><h2>' . esc_html($title) . '</h2><p>' . esc_html($copy) . '</p><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html($button) . '</a></section>';
+	}
+
+	private function mission_control_url(string $path, array $attributes = array()): string {
+		$redirect = (string) ($attributes['redirect'] ?? '');
+		if (! $redirect) {
+			$redirect = get_permalink() ?: home_url();
+		}
+
+		$base = untrailingslashit((string) $this->settings->get('mission_control_url')) . '/' . ltrim($path, '/');
+
+		return add_query_arg(array('return_url' => esc_url_raw($redirect)), $base);
 	}
 
 	private function finder_form(array $attributes): string {

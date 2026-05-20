@@ -190,6 +190,38 @@
 	color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
+.aidorbit-dashboard-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	gap: 1rem;
+}
+
+.aidorbit-dashboard-tile {
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 8px;
+	color: inherit;
+	display: grid;
+	gap: .35rem;
+	padding: 1rem;
+	text-decoration: none;
+}
+
+.aidorbit-dashboard-tile:hover,
+.aidorbit-dashboard-tile:focus {
+	border-color: var(--aidorbit-accent, #0f766e);
+}
+
+.aidorbit-dashboard-tile span {
+	color: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.aidorbit-requirements-list {
+	display: grid;
+	gap: .5rem;
+	margin-block: 1rem;
+	padding-inline-start: 1.25rem;
+}
+
 .aidorbit-notice {
 	border-left: 4px solid #2563eb;
 	padding: .75rem 1rem;

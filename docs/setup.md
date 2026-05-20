@@ -28,6 +28,7 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 
 - Volunteer Missions: an organization-wide Mission discovery page.
 - Volunteer Dashboard: a sign-in entry point for Volunteers.
+- Volunteer Impact: a public impact counter page.
 
 Review and publish the drafts when the page title, URL, and surrounding site content are ready.
 
@@ -56,3 +57,5 @@ The plugin does not store authoritative Volunteer profile, registration, eligibi
 ## Diagnostics
 
 Settings > AidOrbit shows recent connection, cache, and API diagnostics. Diagnostic entries redact tokens, secrets, email addresses, phone numbers, and document-related fields before storing them in WordPress.
+
+Use Download diagnostics to export a redacted JSON support bundle. The export indicates whether secrets are saved, but it does not include token or webhook secret values.

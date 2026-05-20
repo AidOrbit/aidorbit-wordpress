@@ -27,6 +27,7 @@ final class AidOrbit_Admin {
 		add_action('admin_post_aidorbit_test_connection', array($this, 'test_connection'));
 		add_action('admin_post_aidorbit_create_pages', array($this, 'create_pages'));
 		add_action('admin_post_aidorbit_clear_diagnostics', array($this, 'clear_diagnostics'));
+		add_action('admin_post_aidorbit_download_diagnostics', array($this, 'download_diagnostics'));
 	}
 
 	public function add_menu(): void {
@@ -155,7 +156,11 @@ final class AidOrbit_Admin {
 			),
 			'volunteer-dashboard' => array(
 				'title'   => __('Volunteer Dashboard', 'aidorbit'),
-				'content' => '<!-- wp:aidorbit/volunteer-login /-->',
+				'content' => '<!-- wp:aidorbit/volunteer-dashboard /-->',
+			),
+			'volunteer-impact' => array(
+				'title'   => __('Volunteer Impact', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/impact-counter {"range":"year","metrics":"hours,volunteers,missions"} /-->',
 			),
 		);
 
@@ -181,6 +186,39 @@ final class AidOrbit_Admin {
 		$this->assert_admin_action('aidorbit_clear_diagnostics');
 		AidOrbit_Diagnostics::clear();
 		$this->redirect('diagnostics-cleared');
+	}
+
+	public function download_diagnostics(): void {
+		$this->assert_admin_action('aidorbit_download_diagnostics');
+		$settings = $this->settings->all();
+		$payload  = array(
+			'generated_at' => gmdate('c'),
+			'site_url'     => home_url(),
+			'plugin'       => array(
+				'version' => AIDORBIT_VERSION,
+			),
+			'settings'     => array(
+				'api_base_url'           => $settings['api_base_url'],
+				'mission_control_url'    => $settings['mission_control_url'],
+				'organization_id'        => $settings['organization_id'],
+				'public_cache_ttl'       => $settings['public_cache_ttl'],
+				'capacity_cache_ttl'     => $settings['capacity_cache_ttl'],
+				'register_mode'          => $settings['register_mode'],
+				'accent_color'           => $settings['accent_color'],
+				'connection_last_status' => $settings['connection_last_status'],
+				'connection_last_check'  => $settings['connection_last_check'],
+				'api_token'              => $this->settings->api_token() ? '[saved]' : '[missing]',
+				'webhook_secret'         => ! empty($settings['webhook_secret']) ? '[saved]' : '[missing]',
+			),
+			'cache_version' => absint(get_option(AidOrbit_Cache::VERSION_OPTION, 1)),
+			'diagnostics'   => AidOrbit_Diagnostics::entries(),
+		);
+
+		nocache_headers();
+		header('Content-Type: application/json; charset=' . get_option('blog_charset'));
+		header('Content-Disposition: attachment; filename=aidorbit-diagnostics.json');
+		echo wp_json_encode($payload, JSON_PRETTY_PRINT);
+		exit;
 	}
 
 	private function assert_admin_action(string $nonce_action): void {
@@ -255,6 +293,11 @@ final class AidOrbit_Admin {
 		<?php else : ?>
 			<p><?php esc_html_e('No diagnostics have been recorded.', 'aidorbit'); ?></p>
 		<?php endif; ?>
+		<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin-top:12px;">
+			<input type="hidden" name="action" value="aidorbit_download_diagnostics">
+			<?php wp_nonce_field('aidorbit_download_diagnostics'); ?>
+			<?php submit_button(__('Download diagnostics', 'aidorbit'), 'secondary', 'submit', false); ?>
+		</form>
 		<?php
 	}
 }

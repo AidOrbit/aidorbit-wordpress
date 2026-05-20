@@ -20,8 +20,14 @@ Initial MVP surfaces:
 * AidOrbit Mission Detail block and `[aidorbit_mission_detail]`
 * AidOrbit Register CTA block and `[aidorbit_register_button]`
 * AidOrbit Program Portal block and `[aidorbit_program_portal]`
+* AidOrbit Contact Program Staff block and `[aidorbit_contact_program_staff]`
 * AidOrbit Organization Portal block and `[aidorbit_org_portal]`
 * AidOrbit Volunteer Login block and `[aidorbit_volunteer_login]`
+* AidOrbit Volunteer Dashboard block and `[aidorbit_volunteer_dashboard]`
+* AidOrbit My Schedule block and `[aidorbit_my_schedule]`
+* AidOrbit My Requirements block and `[aidorbit_my_requirements]`
+* AidOrbit My Hours block and `[aidorbit_my_hours]`
+* AidOrbit Requirements Checklist block and `[aidorbit_requirements_checklist]`
 * AidOrbit Impact Counter block and `[aidorbit_impact_counter]`
 
 == Setup ==
