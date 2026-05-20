@@ -56,6 +56,11 @@ final class AidOrbit_Rest {
 			return new WP_Error('aidorbit_webhook_not_configured', __('AidOrbit webhook secret is not configured.', 'aidorbit'), array('status' => 403));
 		}
 
+		$signature = (string) $request->get_header('x-aidorbit-signature');
+		if ($signature && $this->valid_signature($signature, $request->get_body(), $secret)) {
+			return true;
+		}
+
 		$provided = (string) $request->get_header('x-aidorbit-webhook-secret');
 		if (! hash_equals($secret, $provided)) {
 			return new WP_Error('aidorbit_webhook_forbidden', __('Invalid AidOrbit webhook secret.', 'aidorbit'), array('status' => 403));
@@ -115,5 +120,16 @@ final class AidOrbit_Rest {
 		}
 
 		return wp_is_numeric_array($data) ? $data : array();
+	}
+
+	private function valid_signature(string $signature, string $body, string $secret): bool {
+		$signature = str_starts_with($signature, 'sha256=') ? substr($signature, 7) : $signature;
+		if (! ctype_xdigit($signature)) {
+			return false;
+		}
+
+		$expected = hash_hmac('sha256', $body, $secret);
+
+		return hash_equals($expected, strtolower($signature));
 	}
 }

@@ -22,6 +22,7 @@ Initial MVP surfaces:
 * AidOrbit Program Portal block and `[aidorbit_program_portal]`
 * AidOrbit Organization Portal block and `[aidorbit_org_portal]`
 * AidOrbit Volunteer Login block and `[aidorbit_volunteer_login]`
+* AidOrbit Impact Counter block and `[aidorbit_impact_counter]`
 
 == Setup ==
 

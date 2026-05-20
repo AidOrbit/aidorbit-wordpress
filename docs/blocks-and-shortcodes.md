@@ -14,6 +14,8 @@ Shortcode:
 
 Use this on a Program page to show upcoming public Missions for a specific Program.
 
+Supported views are list, calendar, grid, and compact.
+
 ## Mission Finder
 
 Block: AidOrbit Mission Finder
@@ -25,6 +27,8 @@ Shortcode:
 ```
 
 Use this when visitors need to search and browse public Missions.
+
+Mission Finder supports visitor-facing keyword, location, and date range filters. The filters use `aidorbit_keyword`, `aidorbit_location`, and `aidorbit_range` query parameters.
 
 ## Featured Missions
 
@@ -97,3 +101,15 @@ Shortcode:
 ```
 
 Use this as the sign-in entry point for Volunteers. Initial dashboard widgets are redirect-first and remain AidOrbit-hosted.
+
+## Impact Counter
+
+Block: AidOrbit Impact Counter
+
+Shortcode:
+
+```text
+[aidorbit_impact_counter program="food-pantry" range="year" metrics="hours,volunteers,missions"]
+```
+
+Use this to display permission-safe public impact totals. The supported MVP metrics are hours, volunteers, and Missions.

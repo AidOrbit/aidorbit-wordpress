@@ -43,7 +43,9 @@ Configure AidOrbit to POST public Mission and Program update notifications to:
 
 `/wp-json/aidorbit/v1/webhook`
 
-Send the shared secret in the `x-aidorbit-webhook-secret` header. A valid request clears the public data cache version so subsequent block renders fetch fresh data.
+Preferred authorization is an HMAC-SHA256 signature of the raw request body in the `x-aidorbit-signature` header. The header may be either the raw hex digest or `sha256={digest}`.
+
+For early integrations, the endpoint also accepts the shared secret in the `x-aidorbit-webhook-secret` header. A valid request clears the public data cache version so subsequent block renders fetch fresh data.
 
 ## Privacy Notes
 

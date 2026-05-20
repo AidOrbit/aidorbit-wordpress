@@ -56,6 +56,15 @@ final class AidOrbit_Api_Client {
 		return $this->request('/missions/' . rawurlencode($mission_id));
 	}
 
+	public function impact(array $query = array()): array|WP_Error {
+		$organization_id = $this->settings->get('organization_id', '');
+		if ($organization_id && empty($query['organization'])) {
+			$query['organization'] = (string) $organization_id;
+		}
+
+		return $this->request('/impact', $query);
+	}
+
 	public function request(string $path, array $query = array()): array|WP_Error {
 		$base_url = untrailingslashit((string) $this->settings->get('api_base_url', ''));
 		$token    = $this->settings->api_token();

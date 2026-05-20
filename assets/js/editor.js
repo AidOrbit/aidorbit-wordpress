@@ -125,7 +125,8 @@
 				location: { type: 'string', default: '' },
 				shift: { type: 'string', default: '' },
 				role: { type: 'string', default: '' },
-				redirect: { type: 'string', default: '' }
+				redirect: { type: 'string', default: '' },
+				metrics: { type: 'string', default: 'hours,volunteers,missions' }
 			},
 			edit: edit(name, fields),
 			save: function () {
@@ -136,6 +137,7 @@
 
 	var layoutOptions = [
 		{ label: __('List', 'aidorbit'), value: 'list' },
+		{ label: __('Calendar', 'aidorbit'), value: 'calendar' },
 		{ label: __('Grid', 'aidorbit'), value: 'grid' },
 		{ label: __('Compact', 'aidorbit'), value: 'compact' }
 	];
@@ -151,6 +153,7 @@
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'keyword', label: __('Default keyword', 'aidorbit') },
 		{ name: 'location', label: __('Location', 'aidorbit') },
+		{ name: 'range', label: __('Date range', 'aidorbit') },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
 
@@ -181,5 +184,11 @@
 
 	register('aidorbit/volunteer-login', __('AidOrbit Volunteer Login', 'aidorbit'), [
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/impact-counter', __('AidOrbit Impact Counter', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'range', label: __('Date range', 'aidorbit') },
+		{ name: 'metrics', label: __('Metrics', 'aidorbit') }
 	]);
 })(window.wp.apiFetch, window.wp.blocks, window.wp.element, window.wp.components, window.wp.blockEditor, window.wp.serverSideRender, window.wp.i18n);

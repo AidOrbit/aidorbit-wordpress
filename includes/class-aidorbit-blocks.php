@@ -78,6 +78,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Volunteer Login', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'volunteer_login'),
 			),
+			'aidorbit/impact-counter' => array(
+				'title'           => __('AidOrbit Impact Counter', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'impact_counter'),
+			),
 		);
 
 		foreach ($blocks as $name => $definition) {
@@ -106,6 +110,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
 		add_shortcode('aidorbit_org_portal', array($this, 'shortcode_organization_portal'));
 		add_shortcode('aidorbit_volunteer_login', array($this, 'shortcode_volunteer_login'));
+		add_shortcode('aidorbit_impact_counter', array($this, 'shortcode_impact_counter'));
 	}
 
 	public function shortcode_program_schedule(mixed $atts): string {
@@ -140,6 +145,10 @@ final class AidOrbit_Blocks {
 		return $this->renderer->volunteer_login($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_impact_counter(mixed $atts): string {
+		return $this->renderer->impact_counter($this->shortcode_atts($atts));
+	}
+
 	private function attributes(): array {
 		return array(
 			'program'  => array('type' => 'string', 'default' => ''),
@@ -153,6 +162,7 @@ final class AidOrbit_Blocks {
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
 			'redirect' => array('type' => 'string', 'default' => ''),
+			'metrics'  => array('type' => 'string', 'default' => 'hours,volunteers,missions'),
 		);
 	}
 

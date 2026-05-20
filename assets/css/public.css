@@ -23,6 +23,21 @@
 	gap: .5rem;
 }
 
+.aidorbit-calendar {
+	display: grid;
+	gap: 1rem;
+}
+
+.aidorbit-calendar-day {
+	border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	padding-block-start: 1rem;
+}
+
+.aidorbit-calendar-day__missions {
+	display: grid;
+	gap: .75rem;
+}
+
 .aidorbit-mission-card {
 	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
 	border-radius: 8px;
@@ -124,10 +139,33 @@
 	flex: 1 1 16rem;
 }
 
-.aidorbit-finder-form input {
+.aidorbit-finder-form input,
+.aidorbit-finder-form select {
 	width: 100%;
 	min-height: 2.75rem;
 	padding: .55rem .75rem;
+}
+
+.aidorbit-impact-metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+	gap: 1rem;
+}
+
+.aidorbit-impact-metric {
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 8px;
+	padding: 1rem;
+}
+
+.aidorbit-impact-metric strong {
+	display: block;
+	font-size: 2rem;
+	line-height: 1.1;
+}
+
+.aidorbit-impact-metric span {
+	color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
 .aidorbit-notice {

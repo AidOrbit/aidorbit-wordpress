@@ -186,6 +186,34 @@ final class AidOrbit_Renderer {
 		return '<div class="aidorbit-surface aidorbit-volunteer-login"><h2>' . esc_html__('Volunteer Dashboard', 'aidorbit') . '</h2><p>' . esc_html__('Sign in with AidOrbit to view your schedule, requirements, hours, and Mission updates.', 'aidorbit') . '</p><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Sign in to AidOrbit', 'aidorbit') . '</a></div>';
 	}
 
+	public function impact_counter(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$metrics    = $this->normalize_metrics((string) ($attributes['metrics'] ?? 'hours,volunteers,missions'));
+		$query      = array(
+			'program' => $attributes['program'],
+			'range'   => $attributes['range'],
+			'metrics' => implode(',', $metrics),
+		);
+		$data       = $this->cache->get_or_set('impact_counter', $query, fn () => $this->api_client->impact($query));
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$impact = $this->extract_single($data);
+		$html   = '<section class="aidorbit-surface aidorbit-impact-counter"><h2>' . esc_html__('Volunteer Impact', 'aidorbit') . '</h2><div class="aidorbit-impact-metrics">';
+		foreach ($metrics as $metric) {
+			$value = $this->field($impact, array($metric, $this->camelize($metric)), null);
+			if (null === $value) {
+				continue;
+			}
+			$html .= '<div class="aidorbit-impact-metric"><strong>' . esc_html($this->format_number($value)) . '</strong><span>' . esc_html($this->metric_label($metric)) . '</span></div>';
+		}
+		$html .= '</div></section>';
+
+		return str_contains($html, '<strong>') ? $html : $this->notice(__('Impact metrics are not available right now.', 'aidorbit'));
+	}
+
 	private function mission_list(array|WP_Error $data, array $attributes, string $heading): string {
 		if (is_wp_error($data)) {
 			return $this->notice($data->get_error_message(), true);
@@ -198,7 +226,19 @@ final class AidOrbit_Renderer {
 		return '<form class="aidorbit-finder-form" role="search" method="get">'
 			. '<label><span class="screen-reader-text">' . esc_html__('Search Missions', 'aidorbit') . '</span>'
 			. '<input type="search" name="aidorbit_keyword" value="' . esc_attr((string) ($attributes['keyword'] ?? '')) . '" placeholder="' . esc_attr__('Search Missions', 'aidorbit') . '"></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Location', 'aidorbit') . '</span>'
+			. '<input type="search" name="aidorbit_location" value="' . esc_attr((string) ($attributes['location'] ?? '')) . '" placeholder="' . esc_attr__('Location', 'aidorbit') . '"></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Date range', 'aidorbit') . '</span>'
+			. '<select name="aidorbit_range">'
+			. $this->range_option('14d', __('Next 14 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. $this->range_option('30d', __('Next 30 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. $this->range_option('90d', __('Next 90 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. '</select></label>'
 			. '<button type="submit">' . esc_html__('Search', 'aidorbit') . '</button></form>';
+	}
+
+	private function range_option(string $value, string $label, string $selected): string {
+		return '<option value="' . esc_attr($value) . '"' . selected($selected, $value, false) . '>' . esc_html($label) . '</option>';
 	}
 
 	private function mission_list_inner(array|WP_Error $data, array $attributes): string {
@@ -213,9 +253,37 @@ final class AidOrbit_Renderer {
 		}
 
 		$layout = sanitize_html_class((string) ($attributes['view'] ?? $attributes['layout'] ?? 'list'));
+		if ('calendar' === $layout) {
+			return $this->mission_calendar($missions);
+		}
+
 		$html   = '<div class="aidorbit-missions aidorbit-missions-' . esc_attr($layout) . '">';
 		foreach ($missions as $mission) {
 			$html .= $this->mission_card($mission);
+		}
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	private function mission_calendar(array $missions): string {
+		$grouped = array();
+		foreach ($missions as $mission) {
+			$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
+			$timestamp = $starts_at ? strtotime($starts_at) : false;
+			$key       = $timestamp ? wp_date('Y-m-d', $timestamp) : 'unscheduled';
+			$grouped[$key][] = $mission;
+		}
+		ksort($grouped);
+
+		$html = '<div class="aidorbit-calendar" role="list">';
+		foreach ($grouped as $date => $date_missions) {
+			$label = 'unscheduled' === $date ? __('Date to be announced', 'aidorbit') : wp_date(get_option('date_format'), strtotime($date));
+			$html .= '<section class="aidorbit-calendar-day" role="listitem"><h3>' . esc_html($label) . '</h3><div class="aidorbit-calendar-day__missions">';
+			foreach ($date_missions as $mission) {
+				$html .= $this->mission_card($mission);
+			}
+			$html .= '</div></section>';
 		}
 		$html .= '</div>';
 
@@ -306,12 +374,20 @@ final class AidOrbit_Renderer {
 	private function normalize_attributes(array $attributes): array {
 		return array(
 			'program'  => sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? '')),
-			'range'    => sanitize_text_field((string) ($attributes['range'] ?? '30d')),
+			'range'    => sanitize_text_field((string) ($_GET['aidorbit_range'] ?? $attributes['range'] ?? '30d')),
 			'view'     => sanitize_text_field((string) ($attributes['view'] ?? $attributes['layout'] ?? 'list')),
 			'limit'    => max(1, min(50, absint($attributes['limit'] ?? 10))),
 			'keyword'  => sanitize_text_field((string) ($_GET['aidorbit_keyword'] ?? $attributes['keyword'] ?? '')),
-			'location' => sanitize_text_field((string) ($attributes['location'] ?? '')),
+			'location' => sanitize_text_field((string) ($_GET['aidorbit_location'] ?? $attributes['location'] ?? '')),
 		);
+	}
+
+	private function normalize_metrics(string $metrics): array {
+		$allowed = array('hours', 'volunteers', 'missions');
+		$parsed  = array_filter(array_map('sanitize_key', array_map('trim', explode(',', $metrics))));
+		$metrics = array_values(array_intersect($allowed, $parsed));
+
+		return $metrics ?: $allowed;
 	}
 
 	private function extract_items(array $data): array {
@@ -325,7 +401,7 @@ final class AidOrbit_Renderer {
 	}
 
 	private function extract_single(array $data): array {
-		foreach (array('data', 'mission') as $key) {
+		foreach (array('data', 'mission', 'impact', 'metrics') as $key) {
 			if (isset($data[$key]) && is_array($data[$key])) {
 				return $data[$key];
 			}
@@ -359,6 +435,28 @@ final class AidOrbit_Renderer {
 		}
 
 		return wp_date(get_option('date_format') . ' ' . get_option('time_format'), $timestamp);
+	}
+
+	private function format_number(mixed $value): string {
+		if (! is_numeric($value)) {
+			return (string) $value;
+		}
+
+		return number_format_i18n((float) $value, floor((float) $value) === (float) $value ? 0 : 1);
+	}
+
+	private function metric_label(string $metric): string {
+		$labels = array(
+			'hours'      => __('Hours served', 'aidorbit'),
+			'volunteers' => __('Volunteers', 'aidorbit'),
+			'missions'   => __('Missions', 'aidorbit'),
+		);
+
+		return $labels[$metric] ?? ucwords(str_replace('_', ' ', $metric));
+	}
+
+	private function camelize(string $value): string {
+		return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $value))));
 	}
 
 	private function status_label(string $status): string {
