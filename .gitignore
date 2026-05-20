@@ -1,0 +1,38 @@
+# Private planning and local notes
+/prds/
+
+# Environment, credentials, and local WordPress config
+.env
+.env.*
+!.env.example
+wp-config.php
+auth.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencies and build output
+/vendor/
+/node_modules/
+/dist/
+/build/
+/coverage/
+/test-results/
+
+# WordPress runtime and generated content
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+/wp-content/backup*/
+/wp-content/debug.log
+
+# Logs, caches, and local tooling
+*.log
+.phpunit.cache/
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/tasks.json
