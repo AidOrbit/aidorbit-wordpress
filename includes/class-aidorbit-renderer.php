@@ -13,6 +13,7 @@ final class AidOrbit_Renderer {
 	private AidOrbit_Settings $settings;
 	private AidOrbit_Cache $cache;
 	private AidOrbit_Api_Client $api_client;
+	private bool $inline_style_added = false;
 
 	public function __construct(AidOrbit_Settings $settings, AidOrbit_Cache $cache, AidOrbit_Api_Client $api_client) {
 		$this->settings   = $settings;
@@ -70,7 +71,12 @@ final class AidOrbit_Renderer {
 			return $this->notice(__('Select a Mission to display its details.', 'aidorbit'));
 		}
 
-		$data = $this->cache->get_or_set('mission_detail', array('mission' => $mission_id), fn () => $this->api_client->mission($mission_id));
+		$data = $this->cache->get_or_set(
+			'mission_detail',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
 		if (is_wp_error($data)) {
 			return $this->notice($data->get_error_message(), true);
 		}
@@ -90,7 +96,12 @@ final class AidOrbit_Renderer {
 			return $this->notice(__('Select a Mission before showing a registration button.', 'aidorbit'));
 		}
 
-		$data = $this->cache->get_or_set('register_cta', array('mission' => $mission_id), fn () => $this->api_client->mission($mission_id));
+		$data = $this->cache->get_or_set(
+			'register_cta',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
 		if (is_wp_error($data)) {
 			return $this->notice($data->get_error_message(), true);
 		}
@@ -388,6 +399,11 @@ final class AidOrbit_Renderer {
 	private function enqueue_assets(): void {
 		if (wp_style_is('aidorbit-public', 'registered')) {
 			wp_enqueue_style('aidorbit-public');
+			if (! $this->inline_style_added) {
+				$accent = sanitize_hex_color((string) $this->settings->get('accent_color', '#0f766e')) ?: '#0f766e';
+				wp_add_inline_style('aidorbit-public', '.aidorbit-surface,.aidorbit-register-cta{--aidorbit-accent:' . esc_attr($accent) . ';}');
+				$this->inline_style_added = true;
+			}
 		}
 	}
 }

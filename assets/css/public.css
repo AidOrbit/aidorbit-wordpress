@@ -67,8 +67,8 @@
 	min-height: 2.75rem;
 	padding: .65rem 1rem;
 	border-radius: 6px;
-	border: 1px solid #0f766e;
-	background: #0f766e;
+	border: 1px solid var(--aidorbit-accent, #0f766e);
+	background: var(--aidorbit-accent, #0f766e);
 	color: #fff;
 	text-decoration: none;
 	font-weight: 700;
@@ -102,7 +102,7 @@
 .aidorbit-button:focus,
 .aidorbit-finder-form button:hover,
 .aidorbit-finder-form button:focus {
-	background: #115e59;
+	background: color-mix(in srgb, var(--aidorbit-accent, #0f766e) 85%, #000);
 	color: #fff;
 }
 

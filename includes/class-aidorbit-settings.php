@@ -22,6 +22,7 @@ final class AidOrbit_Settings {
 			'webhook_secret'         => '',
 			'register_mode'          => 'redirect',
 			'mission_control_url'    => 'https://app.aidorbit.com/mission-control',
+			'accent_color'           => '#0f766e',
 			'connection_last_status' => '',
 			'connection_last_check'  => '',
 		);
@@ -69,6 +70,7 @@ final class AidOrbit_Settings {
 				? (string) ($input['register_mode'] ?? $current['register_mode'])
 				: 'redirect',
 			'mission_control_url'    => esc_url_raw((string) ($input['mission_control_url'] ?? $current['mission_control_url'])),
+			'accent_color'           => sanitize_hex_color((string) ($input['accent_color'] ?? $current['accent_color'])) ?: '#0f766e',
 			'connection_last_status' => $current['connection_last_status'],
 			'connection_last_check'  => $current['connection_last_check'],
 		);

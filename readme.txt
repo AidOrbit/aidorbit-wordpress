@@ -33,6 +33,7 @@ Initial MVP surfaces:
 6. Add AidOrbit blocks to pages, or use the shortcode fallbacks.
 
 Additional setup and publishing guidance is available in `docs/setup.md` and `docs/blocks-and-shortcodes.md`.
+Settings > AidOrbit also includes redacted diagnostics for connection, API, webhook, and cache troubleshooting.
 
 == Privacy ==
 

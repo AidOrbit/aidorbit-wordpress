@@ -13,6 +13,7 @@ final class AidOrbit_Plugin {
 	private static ?AidOrbit_Plugin $instance = null;
 
 	public AidOrbit_Settings $settings;
+	public AidOrbit_Diagnostics $diagnostics;
 	public AidOrbit_Cache $cache;
 	public AidOrbit_Api_Client $api_client;
 	public AidOrbit_Renderer $renderer;
@@ -22,12 +23,13 @@ final class AidOrbit_Plugin {
 
 	private function __construct() {
 		$this->settings   = new AidOrbit_Settings();
+		$this->diagnostics = new AidOrbit_Diagnostics();
 		$this->cache      = new AidOrbit_Cache($this->settings);
 		$this->api_client = new AidOrbit_Api_Client($this->settings);
 		$this->renderer   = new AidOrbit_Renderer($this->settings, $this->cache, $this->api_client);
 		$this->blocks     = new AidOrbit_Blocks($this->renderer);
 		$this->admin      = new AidOrbit_Admin($this->settings, $this->cache, $this->api_client);
-		$this->rest       = new AidOrbit_Rest($this->settings, $this->cache);
+		$this->rest       = new AidOrbit_Rest($this->settings, $this->cache, $this->api_client);
 	}
 
 	public static function instance(): AidOrbit_Plugin {

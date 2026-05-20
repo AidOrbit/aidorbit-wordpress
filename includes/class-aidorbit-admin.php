@@ -26,6 +26,7 @@ final class AidOrbit_Admin {
 		add_action('admin_post_aidorbit_clear_cache', array($this, 'clear_cache'));
 		add_action('admin_post_aidorbit_test_connection', array($this, 'test_connection'));
 		add_action('admin_post_aidorbit_create_pages', array($this, 'create_pages'));
+		add_action('admin_post_aidorbit_clear_diagnostics', array($this, 'clear_diagnostics'));
 	}
 
 	public function add_menu(): void {
@@ -81,6 +82,10 @@ final class AidOrbit_Admin {
 						<td><input id="aidorbit_capacity_cache_ttl" name="capacity_cache_ttl" type="number" min="5" max="300" value="<?php echo esc_attr((string) $settings['capacity_cache_ttl']); ?>"> <?php esc_html_e('seconds', 'aidorbit'); ?></td>
 					</tr>
 					<tr>
+						<th scope="row"><label for="aidorbit_accent_color"><?php esc_html_e('Accent color', 'aidorbit'); ?></label></th>
+						<td><input id="aidorbit_accent_color" name="accent_color" type="color" value="<?php echo esc_attr($settings['accent_color']); ?>"></td>
+					</tr>
+					<tr>
 						<th scope="row"><label for="aidorbit_webhook_secret"><?php esc_html_e('Webhook secret', 'aidorbit'); ?></label></th>
 						<td>
 							<input class="regular-text" id="aidorbit_webhook_secret" name="webhook_secret" type="password" value="" autocomplete="new-password" placeholder="<?php echo esc_attr($settings['webhook_secret'] ? __('Secret saved; enter a new secret to replace it.', 'aidorbit') : __('Paste an AidOrbit webhook secret.', 'aidorbit')); ?>">
@@ -109,6 +114,7 @@ final class AidOrbit_Admin {
 				<?php esc_html_e('Webhook endpoint:', 'aidorbit'); ?>
 				<code><?php echo esc_html(rest_url('aidorbit/v1/webhook')); ?></code>
 			</p>
+			<?php $this->render_diagnostics(); ?>
 		</div>
 		<?php
 	}
@@ -122,6 +128,7 @@ final class AidOrbit_Admin {
 	public function clear_cache(): void {
 		$this->assert_admin_action('aidorbit_clear_cache');
 		$this->cache->clear_public_cache();
+		AidOrbit_Diagnostics::record('cache', __('Public cache cleared manually.', 'aidorbit'));
 		$this->redirect('cache-cleared');
 	}
 
@@ -130,9 +137,11 @@ final class AidOrbit_Admin {
 		$result = $this->api_client->health();
 		if (is_wp_error($result)) {
 			$this->settings->update_connection_status($result->get_error_message());
+			AidOrbit_Diagnostics::record('connection', $result->get_error_message());
 			$this->redirect('connection-failed');
 		}
 		$this->settings->update_connection_status('ok');
+		AidOrbit_Diagnostics::record('connection', __('AidOrbit connection succeeded.', 'aidorbit'));
 		$this->redirect('connection-ok');
 	}
 
@@ -168,6 +177,12 @@ final class AidOrbit_Admin {
 		$this->redirect('pages-created');
 	}
 
+	public function clear_diagnostics(): void {
+		$this->assert_admin_action('aidorbit_clear_diagnostics');
+		AidOrbit_Diagnostics::clear();
+		$this->redirect('diagnostics-cleared');
+	}
+
 	private function assert_admin_action(string $nonce_action): void {
 		if (! current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have permission to manage AidOrbit settings.', 'aidorbit'));
@@ -192,11 +207,54 @@ final class AidOrbit_Admin {
 			'connection-ok'      => __('AidOrbit connection succeeded.', 'aidorbit'),
 			'connection-failed'  => __('AidOrbit connection failed. Check the API URL, token, and organization scope.', 'aidorbit'),
 			'pages-created'      => __('AidOrbit starter pages created as drafts.', 'aidorbit'),
+			'diagnostics-cleared' => __('AidOrbit diagnostics cleared.', 'aidorbit'),
 		);
 		$class = 'connection-failed' === $message ? 'notice notice-error' : 'notice notice-success';
 
 		if (isset($messages[$message])) {
 			echo '<div class="' . esc_attr($class) . '"><p>' . esc_html($messages[$message]) . '</p></div>';
 		}
+	}
+
+	private function render_diagnostics(): void {
+		$entries  = AidOrbit_Diagnostics::entries();
+		$settings = $this->settings->all();
+		?>
+		<h2><?php esc_html_e('Diagnostics', 'aidorbit'); ?></h2>
+		<p>
+			<?php esc_html_e('Last connection check:', 'aidorbit'); ?>
+			<strong><?php echo esc_html($settings['connection_last_check'] ?: __('Never', 'aidorbit')); ?></strong>
+			<?php if ($settings['connection_last_status']) : ?>
+				<span><?php echo esc_html($settings['connection_last_status']); ?></span>
+			<?php endif; ?>
+		</p>
+		<?php if ($entries) : ?>
+			<table class="widefat striped">
+				<thead>
+					<tr>
+						<th><?php esc_html_e('Time', 'aidorbit'); ?></th>
+						<th><?php esc_html_e('Type', 'aidorbit'); ?></th>
+						<th><?php esc_html_e('Message', 'aidorbit'); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($entries as $entry) : ?>
+						<tr>
+							<td><?php echo esc_html((string) ($entry['time'] ?? '')); ?></td>
+							<td><?php echo esc_html((string) ($entry['type'] ?? '')); ?></td>
+							<td><?php echo esc_html((string) ($entry['message'] ?? '')); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+			<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin-top:12px;">
+				<input type="hidden" name="action" value="aidorbit_clear_diagnostics">
+				<?php wp_nonce_field('aidorbit_clear_diagnostics'); ?>
+				<?php submit_button(__('Clear diagnostics', 'aidorbit'), 'secondary', 'submit', false); ?>
+			</form>
+		<?php else : ?>
+			<p><?php esc_html_e('No diagnostics have been recorded.', 'aidorbit'); ?></p>
+		<?php endif; ?>
+		<?php
 	}
 }

@@ -33,9 +33,14 @@ final class AidOrbit_Blocks {
 		wp_register_script(
 			'aidorbit-blocks-editor',
 			AIDORBIT_PLUGIN_URL . 'assets/js/editor.js',
-			array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render', 'wp-i18n'),
+			array('wp-api-fetch', 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render', 'wp-i18n'),
 			AIDORBIT_VERSION,
 			true
+		);
+		wp_add_inline_script(
+			'aidorbit-blocks-editor',
+			'window.aidOrbitEditor = ' . wp_json_encode(array('programsPath' => '/aidorbit/v1/programs')) . ';',
+			'before'
 		);
 	}
 

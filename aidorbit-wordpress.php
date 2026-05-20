@@ -22,6 +22,7 @@ define('AIDORBIT_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('AIDORBIT_VERSION', '0.1.0');
 
 require_once AIDORBIT_PLUGIN_DIR . 'includes/class-aidorbit-settings.php';
+require_once AIDORBIT_PLUGIN_DIR . 'includes/class-aidorbit-diagnostics.php';
 require_once AIDORBIT_PLUGIN_DIR . 'includes/class-aidorbit-cache.php';
 require_once AIDORBIT_PLUGIN_DIR . 'includes/class-aidorbit-api-client.php';
 require_once AIDORBIT_PLUGIN_DIR . 'includes/class-aidorbit-renderer.php';

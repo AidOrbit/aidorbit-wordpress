@@ -12,3 +12,4 @@ if (! defined('WP_UNINSTALL_PLUGIN')) {
 delete_option('aidorbit_settings');
 delete_option('aidorbit_api_token');
 delete_option('aidorbit_cache_version');
+delete_option('aidorbit_diagnostics');

@@ -23,6 +23,15 @@ final class AidOrbit_Api_Client {
 		return $this->request($path, array('limit' => 1));
 	}
 
+	public function programs(array $query = array()): array|WP_Error {
+		$organization_id = $this->settings->get('organization_id', '');
+		if ($organization_id) {
+			return $this->request('/organizations/' . rawurlencode((string) $organization_id) . '/programs', $query);
+		}
+
+		return $this->request('/programs', $query);
+	}
+
 	public function program_portal(string $program_id): array|WP_Error {
 		return $this->request('/programs/' . rawurlencode($program_id) . '/portal');
 	}
@@ -72,6 +81,7 @@ final class AidOrbit_Api_Client {
 		);
 
 		if (is_wp_error($response)) {
+			AidOrbit_Diagnostics::record('api-error', $response->get_error_message(), array('path' => $path));
 			return $response;
 		}
 
@@ -80,6 +90,15 @@ final class AidOrbit_Api_Client {
 		$data   = json_decode($body, true);
 
 		if ($status < 200 || $status >= 300) {
+			AidOrbit_Diagnostics::record(
+				'api-error',
+				sprintf('AidOrbit API request failed with status %d.', $status),
+				array(
+					'path'   => $path,
+					'status' => $status,
+				)
+			);
+
 			return new WP_Error(
 				'aidorbit_api_error',
 				sprintf(
