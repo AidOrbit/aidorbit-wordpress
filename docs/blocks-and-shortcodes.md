@@ -96,6 +96,18 @@ Shortcode:
 
 Use this on Mission detail, campaign, and partner landing pages when visitors should send a public Mission to someone else. The block renders email, Facebook, LinkedIn, and X sharing links from the selected Mission and the current page URL. Use `shareUrl="https://example.org/volunteer"` when the share destination should be a campaign-specific page instead.
 
+## Mission Location
+
+Block: AidOrbit Mission Location
+
+Shortcode:
+
+```text
+[aidorbit_mission_location mission="12345"]
+```
+
+Use this on Mission detail, campaign, and event logistics pages when the location needs to stand alone from the full Mission card. The block renders the public location name, address, and directions link when AidOrbit returns those fields. Virtual Missions show a virtual-location notice instead of exposing private connection details.
+
 ## Organization Profile
 
 Block: AidOrbit Organization Profile

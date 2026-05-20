@@ -373,6 +373,62 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	public function mission_location(array $attributes): string {
+		$this->enqueue_assets();
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $this->notice(__('Select a Mission before showing location details.', 'aidorbit'));
+		}
+
+		$data = $this->cache->get_or_set(
+			'mission_location',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('This Mission is not available for public location display.', 'aidorbit'));
+		}
+
+		$title      = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
+		$is_virtual = (bool) $this->field($mission, array('isVirtual', 'is_virtual', 'virtual'), false);
+		$location   = $this->field($mission, array('locationName', 'location_name', 'location'), '');
+		$address    = $this->field($mission, array('address', 'locationAddress', 'location_address'), '');
+		if (is_array($location)) {
+			$location = (string) ($location['name'] ?? implode(' ', array_filter(array_map('strval', $location))));
+		}
+		if (is_array($address)) {
+			$address = implode(' ', array_filter(array_map('strval', $address)));
+		}
+
+		$html  = '<section class="aidorbit-surface aidorbit-mission-location">';
+		$html .= '<h2>' . esc_html__('Mission Location', 'aidorbit') . '</h2>';
+		$html .= '<p class="aidorbit-meta">' . esc_html($title) . '</p>';
+		if ($is_virtual) {
+			$html .= '<p>' . esc_html__('This Mission is virtual. Connection details are managed in AidOrbit.', 'aidorbit') . '</p>';
+		} elseif ($location || $address) {
+			$html .= '<div class="aidorbit-location-details">';
+			if ($location) {
+				$html .= '<strong>' . esc_html((string) $location) . '</strong>';
+			}
+			if ($address) {
+				$html .= '<p class="aidorbit-location-address">' . esc_html((string) $address) . '</p>';
+			}
+			$html .= '</div>';
+			$html .= $this->directions_link($mission);
+		} else {
+			$html .= '<p>' . esc_html__('Location details are not available for this Mission yet.', 'aidorbit') . '</p>';
+		}
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function program_portal(array $attributes): string {
 		$this->enqueue_assets();
 		$program_id = sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? ''));

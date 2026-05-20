@@ -113,6 +113,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Share Mission', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'share_mission'),
 			),
+			'aidorbit/mission-location' => array(
+				'title'           => __('AidOrbit Mission Location', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'mission_location'),
+			),
 			'aidorbit/organization-profile' => array(
 				'title'           => __('AidOrbit Organization Profile', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'organization_profile'),
@@ -224,6 +228,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_register_button', array($this, 'shortcode_register_cta'));
 		add_shortcode('aidorbit_add_to_calendar', array($this, 'shortcode_add_to_calendar'));
 		add_shortcode('aidorbit_share_mission', array($this, 'shortcode_share_mission'));
+		add_shortcode('aidorbit_mission_location', array($this, 'shortcode_mission_location'));
 		add_shortcode('aidorbit_organization_profile', array($this, 'shortcode_organization_profile'));
 		add_shortcode('aidorbit_donation_cta', array($this, 'shortcode_donation_cta'));
 		add_shortcode('aidorbit_program_portal', array($this, 'shortcode_program_portal'));
@@ -273,6 +278,10 @@ final class AidOrbit_Blocks {
 
 	public function shortcode_share_mission(mixed $atts): string {
 		return $this->renderer->share_mission($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_mission_location(mixed $atts): string {
+		return $this->renderer->mission_location($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_organization_profile(mixed $atts): string {

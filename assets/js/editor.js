@@ -310,6 +310,11 @@
 		{ name: 'shareUrl', label: __('Share URL override', 'aidorbit') }
 	]);
 
+	register('aidorbit/mission-location', __('AidOrbit Mission Location', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' }
+	]);
+
 	register('aidorbit/organization-profile', __('AidOrbit Organization Profile', 'aidorbit'), []);
 
 	register('aidorbit/donation-cta', __('AidOrbit Donation CTA', 'aidorbit'), [
