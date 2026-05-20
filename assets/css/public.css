@@ -1,0 +1,126 @@
+.aidorbit-surface {
+	border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+	border-radius: 8px;
+	padding: 1rem;
+	margin-block: 1rem;
+}
+
+.aidorbit-surface h2,
+.aidorbit-surface h3 {
+	margin-block-start: 0;
+}
+
+.aidorbit-missions {
+	display: grid;
+	gap: 1rem;
+}
+
+.aidorbit-missions-grid {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.aidorbit-missions-compact {
+	gap: .5rem;
+}
+
+.aidorbit-mission-card {
+	border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+	border-radius: 8px;
+	background: Canvas;
+	color: CanvasText;
+}
+
+.aidorbit-mission-card__body {
+	padding: 1rem;
+}
+
+.aidorbit-meta,
+.aidorbit-empty {
+	color: color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.aidorbit-facts {
+	display: grid;
+	gap: .5rem;
+	margin-block: 1rem;
+}
+
+.aidorbit-facts div {
+	display: grid;
+	grid-template-columns: minmax(7rem, max-content) 1fr;
+	gap: .75rem;
+}
+
+.aidorbit-facts dt {
+	font-weight: 700;
+}
+
+.aidorbit-facts dd {
+	margin: 0;
+}
+
+.aidorbit-button,
+.aidorbit-finder-form button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.75rem;
+	padding: .65rem 1rem;
+	border-radius: 6px;
+	border: 1px solid #0f766e;
+	background: #0f766e;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 700;
+}
+
+.aidorbit-button:hover,
+.aidorbit-button:focus,
+.aidorbit-finder-form button:hover,
+.aidorbit-finder-form button:focus {
+	background: #115e59;
+	color: #fff;
+}
+
+.aidorbit-finder-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+	margin-block-end: 1rem;
+}
+
+.aidorbit-finder-form label {
+	flex: 1 1 16rem;
+}
+
+.aidorbit-finder-form input {
+	width: 100%;
+	min-height: 2.75rem;
+	padding: .55rem .75rem;
+}
+
+.aidorbit-notice {
+	border-left: 4px solid #2563eb;
+	padding: .75rem 1rem;
+	background: color-mix(in srgb, #2563eb 8%, transparent);
+}
+
+.aidorbit-notice--error {
+	border-left-color: #b91c1c;
+	background: color-mix(in srgb, #b91c1c 8%, transparent);
+}
+
+.aidorbit-link {
+	font-weight: 700;
+}
+
+@media (max-width: 640px) {
+	.aidorbit-surface {
+		padding: .875rem;
+	}
+
+	.aidorbit-facts div {
+		grid-template-columns: 1fr;
+		gap: .15rem;
+	}
+}
