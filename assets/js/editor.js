@@ -298,6 +298,8 @@
 		{ name: 'role', label: __('Role ID', 'aidorbit') }
 	]);
 
+	register('aidorbit/organization-profile', __('AidOrbit Organization Profile', 'aidorbit'), []);
+
 	register('aidorbit/program-portal', __('AidOrbit Program Portal', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' }
 	]);

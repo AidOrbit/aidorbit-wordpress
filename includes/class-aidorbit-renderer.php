@@ -79,6 +79,75 @@ final class AidOrbit_Renderer {
 		return $this->mission_list($data, $attributes, __('Featured Missions', 'aidorbit'));
 	}
 
+	public function organization_profile(array $attributes): string {
+		$this->enqueue_assets();
+		$data = $this->cache->get_or_set('organization_profile', array(), fn () => $this->api_client->organizations(array('limit' => 1)));
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$organizations = $this->extract_items($data);
+		$organization  = is_array($organizations[0] ?? null) ? $organizations[0] : array();
+		if (! $organization) {
+			return $this->notice(__('Organization profile information is not available right now.', 'aidorbit'));
+		}
+
+		$title       = $this->field($organization, array('name', 'title'), __('Organization', 'aidorbit'));
+		$tagline     = $this->field($organization, array('tagline', 'summary'), '');
+		$description = $this->field($organization, array('description', 'missionStatement', 'mission_statement'), '');
+		$logo_url    = esc_url((string) $this->field($organization, array('logoUrl', 'logo_url'), ''));
+		$image_url   = esc_url((string) $this->field($organization, array('imageUrl', 'image_url', 'defaultPortalImageUrl', 'default_portal_image_url'), ''));
+		$website_url = esc_url((string) $this->field($organization, array('websiteUrl', 'website_url'), ''));
+		$donate_url  = esc_url((string) $this->field($organization, array('donateUrl', 'donate_url'), ''));
+		$support_email = sanitize_email((string) $this->field($organization, array('supportEmail', 'support_email'), ''));
+		$social_links = $this->field($organization, array('socialLinks', 'social_links'), array());
+
+		$html  = '<section class="aidorbit-surface aidorbit-organization-profile">';
+		if ($image_url) {
+			$html .= '<div class="aidorbit-organization-profile__image"><img src="' . $image_url . '" alt=""></div>';
+		}
+		$html .= '<div class="aidorbit-organization-profile__body">';
+		if ($logo_url) {
+			$html .= '<img class="aidorbit-organization-profile__logo" src="' . $logo_url . '" alt="">';
+		}
+		$html .= '<h2>' . esc_html((string) $title) . '</h2>';
+		if ($tagline) {
+			$html .= '<p class="aidorbit-meta">' . esc_html((string) $tagline) . '</p>';
+		}
+		if ($description) {
+			$html .= '<p>' . esc_html((string) $description) . '</p>';
+		}
+		$html .= '<div class="aidorbit-action-row">';
+		if ($website_url) {
+			$html .= '<a class="aidorbit-button" href="' . $website_url . '">' . esc_html__('Visit website', 'aidorbit') . '</a>';
+		}
+		if ($donate_url) {
+			$html .= '<a class="aidorbit-link" href="' . $donate_url . '">' . esc_html__('Donate', 'aidorbit') . '</a>';
+		}
+		if ($support_email) {
+			$html .= '<a class="aidorbit-link" href="mailto:' . esc_attr($support_email) . '">' . esc_html__('Contact', 'aidorbit') . '</a>';
+		}
+		$html .= '</div>';
+		if (is_array($social_links) && $social_links) {
+			$html .= '<ul class="aidorbit-social-links">';
+			foreach ($social_links as $link) {
+				if (! is_array($link)) {
+					continue;
+				}
+				$url = esc_url((string) ($link['url'] ?? ''));
+				if (! $url) {
+					continue;
+				}
+				$label = (string) ($link['label'] ?? __('Social profile', 'aidorbit'));
+				$html .= '<li><a class="aidorbit-link" href="' . $url . '">' . esc_html($label) . '</a></li>';
+			}
+			$html .= '</ul>';
+		}
+		$html .= '</div></section>';
+
+		return $html;
+	}
+
 	public function program_directory(array $attributes): string {
 		$this->enqueue_assets();
 		$attributes = $this->normalize_attributes($attributes);
@@ -1012,7 +1081,7 @@ final class AidOrbit_Renderer {
 	}
 
 	private function extract_items(array $data): array {
-		foreach (array('data', 'missions', 'programs', 'items', 'results') as $key) {
+		foreach (array('data', 'missions', 'programs', 'organizations', 'items', 'results') as $key) {
 			if (isset($data[$key]) && is_array($data[$key])) {
 				return $data[$key];
 			}

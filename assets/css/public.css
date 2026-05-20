@@ -75,6 +75,50 @@
 	margin-block: 0;
 }
 
+.aidorbit-organization-profile {
+	overflow: hidden;
+	padding: 0;
+}
+
+.aidorbit-organization-profile__image img {
+	aspect-ratio: 16 / 5;
+	display: block;
+	height: auto;
+	object-fit: cover;
+	width: 100%;
+}
+
+.aidorbit-organization-profile__body {
+	display: grid;
+	gap: .75rem;
+	padding: 1rem;
+}
+
+.aidorbit-organization-profile__logo {
+	border-radius: 6px;
+	max-height: 4rem;
+	max-width: 12rem;
+	object-fit: contain;
+}
+
+.aidorbit-organization-profile__body p {
+	margin-block: 0;
+}
+
+.aidorbit-action-row,
+.aidorbit-social-links {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+}
+
+.aidorbit-social-links {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
 .aidorbit-mission-card__body {
 	padding: 1rem;
 }

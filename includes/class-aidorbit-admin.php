@@ -179,6 +179,10 @@ final class AidOrbit_Admin {
 		$this->assert_admin_action('aidorbit_create_pages');
 
 		$pages = array(
+			'organization-profile' => array(
+				'title'   => __('Organization Profile', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/organization-profile /-->',
+			),
 			'volunteer-missions' => array(
 				'title'   => __('Volunteer Missions', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/organization-portal {"view":"grid","limit":12} /-->',

@@ -23,6 +23,10 @@ final class AidOrbit_Api_Client {
 		return $this->request($path, array('limit' => 1));
 	}
 
+	public function organizations(array $query = array()): array|WP_Error {
+		return $this->request('/organizations', $query);
+	}
+
 	public function programs(array $query = array()): array|WP_Error {
 		$organization_id = $this->settings->get('organization_id', '');
 		if ($organization_id) {

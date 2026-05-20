@@ -72,6 +72,18 @@ Shortcode:
 
 Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states.
 
+## Organization Profile
+
+Block: AidOrbit Organization Profile
+
+Shortcode:
+
+```text
+[aidorbit_organization_profile]
+```
+
+Use this for a public organization header or about section. The block renders AidOrbit-approved public profile fields such as display name, tagline, public description, logo, cover image, website, donation link, public contact email, and social links. It does not expose private organization settings or Volunteer data.
+
 ## Program Portal
 
 Block: AidOrbit Program Portal
