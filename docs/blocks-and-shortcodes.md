@@ -2,6 +2,8 @@
 
 AidOrbit blocks are dynamic blocks. They render from AidOrbit API responses and do not store authoritative Mission data in post content.
 
+In the block inserter, AidOrbit blocks appear under the AidOrbit category.
+
 ## Program Schedule
 
 Block: AidOrbit Program Schedule
@@ -28,7 +30,7 @@ Shortcode:
 
 Use this when visitors need to search and browse public Missions.
 
-Mission Finder supports visitor-facing keyword, location, and date range filters. The filters use `aidorbit_keyword`, `aidorbit_location`, and `aidorbit_range` query parameters.
+Mission Finder supports visitor-facing keyword, location, date range, format, family-friendly, skill, minimum-age, and eligibility filters. The filters use `aidorbit_keyword`, `aidorbit_location`, `aidorbit_range`, `aidorbit_virtual`, `aidorbit_family_friendly`, `aidorbit_skill`, `aidorbit_age`, and `aidorbit_eligibility` query parameters.
 
 ## Featured Missions
 

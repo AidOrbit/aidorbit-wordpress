@@ -167,7 +167,7 @@
 		blocks.registerBlockType(name, {
 			title: title,
 			icon: 'groups',
-			category: 'widgets',
+			category: 'aidorbit',
 			attributes: {
 				program: { type: 'string', default: '' },
 				mission: { type: 'string', default: '' },
@@ -177,6 +177,11 @@
 				limit: { type: 'number', default: 10 },
 				keyword: { type: 'string', default: '' },
 				location: { type: 'string', default: '' },
+				virtual: { type: 'string', default: '' },
+				familyFriendly: { type: 'string', default: '' },
+				skill: { type: 'string', default: '' },
+				age: { type: 'string', default: '' },
+				eligibility: { type: 'string', default: '' },
 				shift: { type: 'string', default: '' },
 				role: { type: 'string', default: '' },
 				redirect: { type: 'string', default: '' },
@@ -195,6 +200,20 @@
 		{ label: __('Grid', 'aidorbit'), value: 'grid' },
 		{ label: __('Compact', 'aidorbit'), value: 'compact' }
 	];
+	var formatOptions = [
+		{ label: __('Any format', 'aidorbit'), value: '' },
+		{ label: __('Virtual', 'aidorbit'), value: 'virtual' },
+		{ label: __('In person', 'aidorbit'), value: 'in_person' }
+	];
+	var familyOptions = [
+		{ label: __('Any age group', 'aidorbit'), value: '' },
+		{ label: __('Family friendly', 'aidorbit'), value: 'yes' }
+	];
+	var eligibilityOptions = [
+		{ label: __('Any eligibility', 'aidorbit'), value: '' },
+		{ label: __('Open to new Volunteers', 'aidorbit'), value: 'open' },
+		{ label: __('Requirements listed', 'aidorbit'), value: 'requirements' }
+	];
 
 	register('aidorbit/program-schedule', __('AidOrbit Program Schedule', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
@@ -208,6 +227,11 @@
 		{ name: 'keyword', label: __('Default keyword', 'aidorbit') },
 		{ name: 'location', label: __('Location', 'aidorbit') },
 		{ name: 'range', label: __('Date range', 'aidorbit') },
+		{ name: 'virtual', label: __('Format', 'aidorbit'), type: 'select', options: formatOptions },
+		{ name: 'familyFriendly', label: __('Family friendly', 'aidorbit'), type: 'select', options: familyOptions },
+		{ name: 'skill', label: __('Skill', 'aidorbit') },
+		{ name: 'age', label: __('Minimum age', 'aidorbit') },
+		{ name: 'eligibility', label: __('Eligibility', 'aidorbit'), type: 'select', options: eligibilityOptions },
 		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
 	]);
 

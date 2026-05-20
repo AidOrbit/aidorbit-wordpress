@@ -20,6 +20,7 @@ final class AidOrbit_Blocks {
 		add_action('init', array($this, 'register_assets'));
 		add_action('init', array($this, 'register_blocks'));
 		add_action('init', array($this, 'register_shortcodes'));
+		add_filter('block_categories_all', array($this, 'register_category'));
 	}
 
 	public function register_assets(): void {
@@ -47,6 +48,23 @@ final class AidOrbit_Blocks {
 			) . ';',
 			'before'
 		);
+		wp_set_script_translations('aidorbit-blocks-editor', 'aidorbit', AIDORBIT_PLUGIN_DIR . 'languages');
+	}
+
+	public function register_category(array $categories): array {
+		foreach ($categories as $category) {
+			if ('aidorbit' === ($category['slug'] ?? '')) {
+				return $categories;
+			}
+		}
+
+		$categories[] = array(
+			'slug'  => 'aidorbit',
+			'title' => __('AidOrbit', 'aidorbit'),
+			'icon'  => null,
+		);
+
+		return $categories;
 	}
 
 	public function register_blocks(): void {
@@ -95,7 +113,7 @@ final class AidOrbit_Blocks {
 				array(
 					'api_version'     => 3,
 					'title'           => $definition['title'],
-					'category'        => 'widgets',
+					'category'        => 'aidorbit',
 					'icon'            => 'groups',
 					'editor_script'   => 'aidorbit-blocks-editor',
 					'style'           => 'aidorbit-public',
@@ -164,6 +182,11 @@ final class AidOrbit_Blocks {
 			'limit'    => array('type' => 'number', 'default' => 10),
 			'keyword'  => array('type' => 'string', 'default' => ''),
 			'location' => array('type' => 'string', 'default' => ''),
+			'virtual'  => array('type' => 'string', 'default' => ''),
+			'familyFriendly' => array('type' => 'string', 'default' => ''),
+			'skill'    => array('type' => 'string', 'default' => ''),
+			'age'      => array('type' => 'string', 'default' => ''),
+			'eligibility' => array('type' => 'string', 'default' => ''),
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
 			'redirect' => array('type' => 'string', 'default' => ''),

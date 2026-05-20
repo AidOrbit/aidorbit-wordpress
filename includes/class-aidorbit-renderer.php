@@ -40,11 +40,16 @@ final class AidOrbit_Renderer {
 		$this->enqueue_assets();
 		$attributes = $this->normalize_attributes($attributes);
 		$query      = array(
-			'program' => $attributes['program'],
-			'keyword' => $attributes['keyword'],
-			'location' => $attributes['location'],
-			'range'   => $attributes['range'],
-			'limit'   => $attributes['limit'],
+			'program'         => $attributes['program'],
+			'keyword'         => $attributes['keyword'],
+			'location'        => $attributes['location'],
+			'range'           => $attributes['range'],
+			'limit'           => $attributes['limit'],
+			'virtual'         => $attributes['virtual'],
+			'family_friendly' => $attributes['family_friendly'],
+			'skill'           => $attributes['skill'],
+			'age'             => $attributes['age'],
+			'eligibility'     => $attributes['eligibility'],
 		);
 		$data       = $this->cache->get_or_set('mission_finder', $query, fn () => $this->api_client->missions($query));
 
@@ -156,11 +161,16 @@ final class AidOrbit_Renderer {
 		$attributes = $this->normalize_attributes($attributes);
 		$attributes['view'] = $attributes['view'] ?: 'grid';
 		$query      = array(
-			'program'  => $attributes['program'],
-			'keyword'  => $attributes['keyword'],
-			'location' => $attributes['location'],
-			'range'    => $attributes['range'],
-			'limit'    => $attributes['limit'],
+			'program'         => $attributes['program'],
+			'keyword'         => $attributes['keyword'],
+			'location'        => $attributes['location'],
+			'range'           => $attributes['range'],
+			'limit'           => $attributes['limit'],
+			'virtual'         => $attributes['virtual'],
+			'family_friendly' => $attributes['family_friendly'],
+			'skill'           => $attributes['skill'],
+			'age'             => $attributes['age'],
+			'eligibility'     => $attributes['eligibility'],
 		);
 		$data       = $this->cache->get_or_set('organization_portal', $query, fn () => $this->api_client->missions($query));
 
@@ -230,14 +240,35 @@ final class AidOrbit_Renderer {
 			. '<input type="search" name="aidorbit_location" value="' . esc_attr((string) ($attributes['location'] ?? '')) . '" placeholder="' . esc_attr__('Location', 'aidorbit') . '"></label>'
 			. '<label><span class="screen-reader-text">' . esc_html__('Date range', 'aidorbit') . '</span>'
 			. '<select name="aidorbit_range">'
-			. $this->range_option('14d', __('Next 14 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
-			. $this->range_option('30d', __('Next 30 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
-			. $this->range_option('90d', __('Next 90 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. $this->select_option('14d', __('Next 14 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. $this->select_option('30d', __('Next 30 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. $this->select_option('90d', __('Next 90 days', 'aidorbit'), (string) ($attributes['range'] ?? '30d'))
+			. '</select></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Format', 'aidorbit') . '</span>'
+			. '<select name="aidorbit_virtual">'
+			. $this->select_option('', __('Any format', 'aidorbit'), (string) ($attributes['virtual'] ?? ''))
+			. $this->select_option('virtual', __('Virtual', 'aidorbit'), (string) ($attributes['virtual'] ?? ''))
+			. $this->select_option('in_person', __('In person', 'aidorbit'), (string) ($attributes['virtual'] ?? ''))
+			. '</select></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Family friendly', 'aidorbit') . '</span>'
+			. '<select name="aidorbit_family_friendly">'
+			. $this->select_option('', __('Any age group', 'aidorbit'), (string) ($attributes['family_friendly'] ?? ''))
+			. $this->select_option('yes', __('Family friendly', 'aidorbit'), (string) ($attributes['family_friendly'] ?? ''))
+			. '</select></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Skill', 'aidorbit') . '</span>'
+			. '<input type="search" name="aidorbit_skill" value="' . esc_attr((string) ($attributes['skill'] ?? '')) . '" placeholder="' . esc_attr__('Skill', 'aidorbit') . '"></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Minimum age', 'aidorbit') . '</span>'
+			. '<input type="number" min="0" max="120" name="aidorbit_age" value="' . esc_attr((string) ($attributes['age'] ?? '')) . '" placeholder="' . esc_attr__('Minimum age', 'aidorbit') . '"></label>'
+			. '<label><span class="screen-reader-text">' . esc_html__('Eligibility', 'aidorbit') . '</span>'
+			. '<select name="aidorbit_eligibility">'
+			. $this->select_option('', __('Any eligibility', 'aidorbit'), (string) ($attributes['eligibility'] ?? ''))
+			. $this->select_option('open', __('Open to new Volunteers', 'aidorbit'), (string) ($attributes['eligibility'] ?? ''))
+			. $this->select_option('requirements', __('Requirements listed', 'aidorbit'), (string) ($attributes['eligibility'] ?? ''))
 			. '</select></label>'
 			. '<button type="submit">' . esc_html__('Search', 'aidorbit') . '</button></form>';
 	}
 
-	private function range_option(string $value, string $label, string $selected): string {
+	private function select_option(string $value, string $label, string $selected): string {
 		return '<option value="' . esc_attr($value) . '"' . selected($selected, $value, false) . '>' . esc_html($label) . '</option>';
 	}
 
@@ -301,6 +332,8 @@ final class AidOrbit_Renderer {
 		$capacity     = $this->field($mission, array('capacitySummary', 'capacity_summary'), '');
 		$is_virtual   = (bool) $this->field($mission, array('isVirtual', 'is_virtual', 'virtual'), false);
 		$contact      = $this->field($mission, array('contactName', 'contact_name', 'contact'), '');
+		$family       = (bool) $this->field($mission, array('familyFriendly', 'family_friendly'), false);
+		$skills       = $this->field($mission, array('skills', 'skillNames', 'skill_names'), array());
 
 		$html  = '<article class="aidorbit-mission-card aidorbit-status-' . esc_attr(sanitize_html_class($status)) . '">';
 		$html .= '<div class="aidorbit-mission-card__body">';
@@ -319,6 +352,12 @@ final class AidOrbit_Renderer {
 		}
 		if ($requirements) {
 			$html .= '<div><dt>' . esc_html__('Requirements', 'aidorbit') . '</dt><dd>' . esc_html((string) $requirements) . '</dd></div>';
+		}
+		if ($family) {
+			$html .= '<div><dt>' . esc_html__('Family friendly', 'aidorbit') . '</dt><dd>' . esc_html__('Yes', 'aidorbit') . '</dd></div>';
+		}
+		if (is_array($skills) && $skills) {
+			$html .= '<div><dt>' . esc_html__('Skills', 'aidorbit') . '</dt><dd>' . esc_html(implode(', ', array_map('strval', array_slice($skills, 0, 4)))) . '</dd></div>';
 		}
 		if (! empty($options['detail']) && $contact) {
 			$html .= '<div><dt>' . esc_html__('Contact', 'aidorbit') . '</dt><dd>' . esc_html(is_array($contact) ? ($contact['name'] ?? '') : (string) $contact) . '</dd></div>';
@@ -419,7 +458,26 @@ final class AidOrbit_Renderer {
 			'limit'    => max(1, min(50, absint($attributes['limit'] ?? 10))),
 			'keyword'  => sanitize_text_field((string) ($_GET['aidorbit_keyword'] ?? $attributes['keyword'] ?? '')),
 			'location' => sanitize_text_field((string) ($_GET['aidorbit_location'] ?? $attributes['location'] ?? '')),
+			'virtual'  => $this->sanitize_choice((string) ($_GET['aidorbit_virtual'] ?? $attributes['virtual'] ?? ''), array('', 'virtual', 'in_person')),
+			'family_friendly' => $this->sanitize_choice((string) ($_GET['aidorbit_family_friendly'] ?? $attributes['familyFriendly'] ?? $attributes['family_friendly'] ?? ''), array('', 'yes')),
+			'skill'    => sanitize_text_field((string) ($_GET['aidorbit_skill'] ?? $attributes['skill'] ?? '')),
+			'age'      => $this->sanitize_age($_GET['aidorbit_age'] ?? $attributes['age'] ?? ''),
+			'eligibility' => $this->sanitize_choice((string) ($_GET['aidorbit_eligibility'] ?? $attributes['eligibility'] ?? ''), array('', 'open', 'requirements')),
 		);
+	}
+
+	private function sanitize_choice(string $value, array $allowed): string {
+		$value = sanitize_key($value);
+
+		return in_array($value, $allowed, true) ? $value : '';
+	}
+
+	private function sanitize_age(mixed $value): string {
+		if ('' === $value || null === $value) {
+			return '';
+		}
+
+		return (string) min(120, max(0, absint($value)));
 	}
 
 	private function normalize_metrics(string $metrics): array {
