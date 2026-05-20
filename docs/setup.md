@@ -37,7 +37,11 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 - Recommended Missions: a focused sign-in entry point for personalized Mission recommendations.
 - Team Registration: an AidOrbit-hosted group, family, partner, or team registration entry point.
 - Volunteer Impact: a public impact counter page.
+- Annual Report: a public annual impact and reporting page.
+- Campaign Volunteering: a Mission collection page for campaigns.
+- Partner Missions: a public-only partner embed page with referral support.
 - Volunteer Check-In: a QR-friendly AidOrbit check-in entry point.
+- Mission Reminders: a reminder signup and notification preferences entry point.
 - Volunteer Thank You: post-service impact and recognition entry points.
 - Program pages: one draft Program portal and schedule page for each configured allowed Program ID.
 
@@ -50,6 +54,8 @@ When the plugin is connected, Program-aware blocks load authorized Programs into
 The picker is scoped by the saved AidOrbit token, organization ID, and optional allowed Program list. It does not expose API tokens to the browser.
 
 Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Mission Countdown, Check-In, Feedback Form, and Requirements Checklist blocks.
+
+Register CTA supports a modal registration mode. The modal loads the AidOrbit-hosted registration flow so capacity, duplicate prevention, waitlist, approval, schedule conflict, and eligibility checks remain enforced by AidOrbit. If JavaScript is unavailable, the CTA remains a normal link to AidOrbit.
 
 ## Webhook Cache Invalidation
 

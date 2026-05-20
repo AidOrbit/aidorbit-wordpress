@@ -268,7 +268,21 @@ final class AidOrbit_Renderer {
 			return $this->notice(__('This Mission is not available for public registration.', 'aidorbit'));
 		}
 
-		return '<div class="aidorbit-register-cta">' . $this->registration_cta($mission, $attributes) . '</div>';
+		$intent = array();
+		if ($this->registration_mode($attributes)) {
+			$intent_data = $this->cache->get_or_set(
+				'registration_intent',
+				array('mission' => $mission_id),
+				fn () => $this->api_client->registration_intent($mission_id),
+				(int) $this->settings->get('capacity_cache_ttl', 30)
+			);
+			if (! is_wp_error($intent_data)) {
+				$intent = $this->field($intent_data, array('registrationIntent', 'registration_intent'), array());
+				$intent = is_array($intent) ? $intent : array();
+			}
+		}
+
+		return '<div class="aidorbit-register-cta">' . $this->registration_cta($mission, $attributes, $intent) . '</div>';
 	}
 
 	public function add_to_calendar(array $attributes): string {
@@ -594,18 +608,26 @@ final class AidOrbit_Renderer {
 
 	public function volunteer_dashboard(array $attributes): string {
 		$this->enqueue_assets();
-		$tiles = array(
-			array(__('My Schedule', 'aidorbit'), __('Review upcoming Missions and registration status.', 'aidorbit'), '/volunteers/me/schedule'),
-			array(__('My Requirements', 'aidorbit'), __('Complete waivers, forms, training, and other readiness steps.', 'aidorbit'), '/volunteers/me/requirements'),
-			array(__('My Hours', 'aidorbit'), __('View submitted hours and proof-of-service details.', 'aidorbit'), '/volunteers/me/hours'),
-			array(__('Recommended Missions', 'aidorbit'), __('Find Missions that match your profile and interests.', 'aidorbit'), '/volunteers/me/recommendations'),
-		);
+		$intent = $this->api_client->dashboard_intent();
+		$dashboard = is_wp_error($intent) ? array() : $this->field($intent, array('dashboardIntent', 'dashboard_intent'), array());
+		$tiles = is_array($dashboard) ? ($dashboard['tiles'] ?? array()) : array();
+		if (! is_array($tiles) || ! $tiles) {
+			$tiles = array(
+				array('title' => __('My Schedule', 'aidorbit'), 'summary' => __('Review upcoming Missions and registration status.', 'aidorbit'), 'url' => '/volunteers/me/schedule'),
+				array('title' => __('My Requirements', 'aidorbit'), 'summary' => __('Complete waivers, forms, training, and other readiness steps.', 'aidorbit'), 'url' => '/volunteers/me/requirements'),
+				array('title' => __('My Hours', 'aidorbit'), 'summary' => __('View submitted hours and proof-of-service details.', 'aidorbit'), 'url' => '/volunteers/me/hours'),
+				array('title' => __('Recommended Missions', 'aidorbit'), 'summary' => __('Find Missions that match your profile and interests.', 'aidorbit'), 'url' => '/volunteers/me/recommendations'),
+			);
+		}
 
 		$html  = '<section class="aidorbit-surface aidorbit-volunteer-dashboard"><h2>' . esc_html__('Volunteer Dashboard', 'aidorbit') . '</h2>';
 		$html .= '<p>' . esc_html__('Sign in with AidOrbit to manage your volunteer activity securely.', 'aidorbit') . '</p>';
 		$html .= '<div class="aidorbit-dashboard-tiles">';
 		foreach ($tiles as $tile) {
-			$html .= '<a class="aidorbit-dashboard-tile" href="' . esc_url($this->mission_control_url($tile[2], $attributes)) . '"><strong>' . esc_html($tile[0]) . '</strong><span>' . esc_html($tile[1]) . '</span></a>';
+			if (! is_array($tile)) {
+				continue;
+			}
+			$html .= '<a class="aidorbit-dashboard-tile" href="' . esc_url($this->dashboard_tile_url((string) ($tile['url'] ?? ''), $attributes)) . '"><strong>' . esc_html((string) ($tile['title'] ?? __('Dashboard', 'aidorbit'))) . '</strong><span>' . esc_html((string) ($tile['summary'] ?? '')) . '</span></a>';
 		}
 		$html .= '</div></section>';
 
@@ -659,13 +681,12 @@ final class AidOrbit_Renderer {
 
 	public function team_registration(array $attributes): string {
 		$this->enqueue_assets();
-		$path = $this->mission_path($attributes, 'team-registration', '/volunteers/team-registration');
-
-		return $this->volunteer_action_panel(
+		return $this->workflow_action_panel(
+			'team-registration',
 			__('Team Registration', 'aidorbit'),
 			__('Register a team, group, family, or partner crew through AidOrbit so capacity, eligibility, and consent requirements stay enforced.', 'aidorbit'),
 			__('Start team registration', 'aidorbit'),
-			$path,
+			$this->mission_path($attributes, 'team-registration', '/volunteers/team-registration'),
 			$attributes
 		);
 	}
@@ -673,6 +694,42 @@ final class AidOrbit_Renderer {
 	public function qr_checkin(array $attributes): string {
 		$this->enqueue_assets();
 		$path = $this->mission_path($attributes, 'check-in', '/check-in');
+		$url  = $this->mission_control_url($path, $attributes);
+		if ($this->truthy($attributes['poster'] ?? '')) {
+			$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+			$title = __('Mission Check-In', 'aidorbit');
+			$date = '';
+			if ($mission_id) {
+				$data = $this->cache->get_or_set(
+					'qr_checkin_poster',
+					array('mission' => $mission_id),
+					fn () => $this->api_client->mission($mission_id),
+					(int) $this->settings->get('capacity_cache_ttl', 30)
+				);
+				if (! is_wp_error($data)) {
+					$mission = $this->extract_single($data);
+					if ($this->is_public_mission($mission)) {
+						$title = (string) $this->field($mission, array('title', 'name'), $title);
+						$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
+						$timezone = (string) $this->field($mission, array('timezone', 'timeZone', 'time_zone'), '');
+						$date = $starts_at ? $this->format_datetime($starts_at, $timezone) : '';
+					}
+				}
+			}
+
+			$html  = '<section class="aidorbit-surface aidorbit-checkin-poster">';
+			$html .= '<p class="aidorbit-meta">' . esc_html__('AidOrbit Check-In', 'aidorbit') . '</p>';
+			$html .= '<h2>' . esc_html($title) . '</h2>';
+			if ($date) {
+				$html .= '<p>' . esc_html($date) . '</p>';
+			}
+			$html .= '<p>' . esc_html__('Scan this page URL or open the check-in link to record attendance in AidOrbit.', 'aidorbit') . '</p>';
+			$html .= '<p class="aidorbit-checkin-url">' . esc_html($url) . '</p>';
+			$html .= '<div class="aidorbit-checkin-poster__actions"><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html__('Open check-in', 'aidorbit') . '</a><button class="aidorbit-button aidorbit-print-button" type="button">' . esc_html__('Print poster', 'aidorbit') . '</button></div>';
+			$html .= '</section>';
+
+			return $html;
+		}
 
 		return $this->volunteer_action_panel(
 			__('Mission Check-In', 'aidorbit'),
@@ -685,33 +742,32 @@ final class AidOrbit_Renderer {
 
 	public function kiosk_checkin(array $attributes): string {
 		$this->enqueue_assets();
-		$path = $this->mission_path($attributes, 'kiosk-check-in', '/kiosk/check-in');
-
-		return $this->volunteer_action_panel(
+		return $this->workflow_action_panel(
+			'kiosk',
 			__('Kiosk Check-In', 'aidorbit'),
 			__('Open a staff or site kiosk flow for volunteer arrivals.', 'aidorbit'),
 			__('Open check-in kiosk', 'aidorbit'),
-			$path,
+			$this->mission_path($attributes, 'kiosk-check-in', '/kiosk/check-in'),
 			$attributes
 		);
 	}
 
 	public function post_mission_feedback(array $attributes): string {
 		$this->enqueue_assets();
-		$path = $this->mission_path($attributes, 'feedback', '/volunteers/me/feedback');
-
-		return $this->volunteer_action_panel(
+		return $this->workflow_action_panel(
+			'feedback',
 			__('Mission Feedback', 'aidorbit'),
 			__('Share post-Mission feedback through AidOrbit.', 'aidorbit'),
 			__('Share feedback', 'aidorbit'),
-			$path,
+			$this->mission_path($attributes, 'feedback', '/volunteers/me/feedback'),
 			$attributes
 		);
 	}
 
 	public function volunteer_recognition(array $attributes): string {
 		$this->enqueue_assets();
-		return $this->volunteer_action_panel(
+		return $this->workflow_action_panel(
+			'recognition',
 			__('Volunteer Recognition', 'aidorbit'),
 			__('View recognition, badges, milestones, and community appreciation in AidOrbit.', 'aidorbit'),
 			__('Open recognition', 'aidorbit'),
@@ -761,7 +817,18 @@ final class AidOrbit_Renderer {
 
 		$requirements = $this->field($mission, array('requirements', 'publicRequirements', 'public_requirements'), array());
 		$summary      = $this->field($mission, array('requirementsSummary', 'requirements_summary'), '');
+		$intent_data  = $this->api_client->requirements_intent($mission_id);
+		$intent       = is_wp_error($intent_data) ? array() : $this->field($intent_data, array('requirementsIntent', 'requirements_intent'), array());
+		if (is_array($intent) && ! empty($intent['summary'])) {
+			$summary = (string) $intent['summary'];
+		}
+		if (is_array($intent) && ! empty($intent['items']) && is_array($intent['items'])) {
+			$requirements = $intent['items'];
+		}
 		$url          = $this->mission_control_url('/missions/' . rawurlencode($mission_id) . '/requirements', $attributes);
+		if (is_array($intent) && ! empty($intent['url'])) {
+			$url = $this->dashboard_tile_url((string) $intent['url'], $attributes);
+		}
 
 		$html  = '<section class="aidorbit-surface aidorbit-requirements-checklist"><h2>' . esc_html__('Mission Requirements', 'aidorbit') . '</h2>';
 		if ($summary) {
@@ -773,7 +840,8 @@ final class AidOrbit_Renderer {
 				$label = is_array($requirement)
 					? (string) ($requirement['name'] ?? $requirement['title'] ?? $requirement['label'] ?? __('Requirement', 'aidorbit'))
 					: (string) $requirement;
-				$html .= '<li>' . esc_html($label) . '</li>';
+				$status = is_array($requirement) ? (string) ($requirement['status'] ?? '') : '';
+				$html .= '<li>' . esc_html($label) . ($status ? ' <span class="aidorbit-requirement-status">' . esc_html($this->requirement_status_label($status)) . '</span>' : '') . '</li>';
 			}
 			$html .= '</ul>';
 		}
@@ -781,6 +849,18 @@ final class AidOrbit_Renderer {
 		$html .= '</section>';
 
 		return $html;
+	}
+
+	private function requirement_status_label(string $status): string {
+		return match (sanitize_key($status)) {
+			'sign_in_required' => __('Sign in required', 'aidorbit'),
+			'not_started' => __('Not started', 'aidorbit'),
+			'pending' => __('Pending review', 'aidorbit'),
+			'complete', 'completed' => __('Complete', 'aidorbit'),
+			'expired' => __('Expired', 'aidorbit'),
+			'rejected' => __('Needs resubmission', 'aidorbit'),
+			default => ucwords(str_replace(array('-', '_'), ' ', $status)),
+		};
 	}
 
 	public function impact_counter(array $attributes): string {
@@ -811,6 +891,90 @@ final class AidOrbit_Renderer {
 		return str_contains($html, '<strong>') ? $html : $this->notice(__('Impact metrics are not available right now.', 'aidorbit'));
 	}
 
+	public function annual_report(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$intent = $this->workflow_intent('annual-report', $attributes);
+		$metrics = $this->normalize_metrics((string) ($attributes['metrics'] ?? 'hours,volunteers,missions'));
+		$data = $this->cache->get_or_set(
+			'annual_report',
+			array('program' => $attributes['program'], 'range' => 'year', 'metrics' => implode(',', $metrics)),
+			fn () => $this->api_client->impact(array('program' => $attributes['program'], 'range' => 'year', 'metrics' => implode(',', $metrics)))
+		);
+		$impact = is_wp_error($data) ? array() : $this->extract_single($data);
+
+		$html  = '<section class="aidorbit-surface aidorbit-annual-report"><h2>' . esc_html((string) ($intent['title'] ?? __('Annual Report', 'aidorbit'))) . '</h2>';
+		$html .= '<p>' . esc_html((string) ($intent['summary'] ?? __('Review public impact and annual service results.', 'aidorbit'))) . '</p>';
+		$html .= '<div class="aidorbit-impact-metrics">';
+		foreach ($metrics as $metric) {
+			$value = $this->field($impact, array($metric, $this->camelize($metric)), null);
+			if (null !== $value) {
+				$html .= '<div class="aidorbit-impact-metric"><strong>' . esc_html($this->format_number($value)) . '</strong><span>' . esc_html($this->metric_label($metric)) . '</span></div>';
+			}
+		}
+		$html .= '</div>';
+		$html .= $this->workflow_features($intent);
+		$html .= '</section>';
+
+		return $html;
+	}
+
+	public function program_metrics(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->workflow_action_panel(
+			'program-metrics',
+			__('Program Metrics', 'aidorbit'),
+			__('Open staff Program metrics in AidOrbit.', 'aidorbit'),
+			__('Open metrics', 'aidorbit'),
+			'/reports/program-metrics',
+			$attributes
+		);
+	}
+
+	public function partner_embed(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$attributes['referral'] = sanitize_text_field((string) ($attributes['referral'] ?? $attributes['partner'] ?? ''));
+		$intent = $this->workflow_intent('partner-embed', $attributes);
+		$query = array(
+			'program' => $attributes['program'],
+			'status' => 'public',
+			'limit' => $attributes['limit'],
+			'view' => $attributes['view'] ?: 'grid',
+		);
+		$data = $this->cache->get_or_set('partner_embed', $query, fn () => $this->api_client->missions($query));
+
+		return '<section class="aidorbit-surface aidorbit-partner-embed"><h2>' . esc_html((string) ($intent['title'] ?? __('Partner Missions', 'aidorbit'))) . '</h2><p>' . esc_html((string) ($intent['summary'] ?? __('Public Missions available for partners.', 'aidorbit'))) . '</p>' . $this->mission_list_inner($data, $attributes) . '</section>';
+	}
+
+	public function campaign_landing(array $attributes): string {
+		$this->enqueue_assets();
+		$attributes = $this->normalize_attributes($attributes);
+		$intent = $this->workflow_intent('campaign', $attributes);
+		$query = array(
+			'program' => $attributes['program'],
+			'keyword' => sanitize_text_field((string) ($attributes['campaign'] ?? $attributes['keyword'] ?? '')),
+			'range' => $attributes['range'],
+			'limit' => $attributes['limit'],
+			'view' => $attributes['view'] ?: 'grid',
+		);
+		$data = $this->cache->get_or_set('campaign_landing', $query, fn () => $this->api_client->missions($query));
+
+		return '<section class="aidorbit-surface aidorbit-campaign-landing"><h2>' . esc_html((string) ($intent['title'] ?? __('Campaign Landing Page', 'aidorbit'))) . '</h2><p>' . esc_html((string) ($intent['summary'] ?? __('Explore campaign Missions and choose a way to help.', 'aidorbit'))) . '</p>' . $this->mission_list_inner($data, $attributes) . '</section>';
+	}
+
+	public function mission_reminders(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->workflow_action_panel(
+			'reminders',
+			__('Mission Reminders', 'aidorbit'),
+			__('Manage reminder signup, notification preferences, and Mission messages in AidOrbit.', 'aidorbit'),
+			__('Manage reminders', 'aidorbit'),
+			$this->mission_path($attributes, 'reminders', '/volunteers/me/notifications'),
+			$attributes
+		);
+	}
+
 	private function mission_list(array|WP_Error $data, array $attributes, string $heading): string {
 		if (is_wp_error($data)) {
 			return $this->notice($data->get_error_message(), true);
@@ -823,6 +987,51 @@ final class AidOrbit_Renderer {
 		$url = $this->mission_control_url($path, $attributes);
 
 		return '<section class="aidorbit-surface aidorbit-volunteer-action"><h2>' . esc_html($title) . '</h2><p>' . esc_html($copy) . '</p><a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html($button) . '</a></section>';
+	}
+
+	private function workflow_action_panel(string $type, string $title, string $copy, string $button, string $path, array $attributes): string {
+		$intent = $this->workflow_intent($type, $attributes);
+		$resolved_title = (string) ($intent['title'] ?? $title);
+		$resolved_copy = (string) ($intent['summary'] ?? $copy);
+		$intent_url = (string) ($intent['url'] ?? '');
+		$url = $intent_url ? $this->dashboard_tile_url($intent_url, $attributes) : $this->mission_control_url($path, $attributes);
+
+		$html  = '<section class="aidorbit-surface aidorbit-volunteer-action aidorbit-workflow-action">';
+		$html .= '<h2>' . esc_html($resolved_title) . '</h2><p>' . esc_html($resolved_copy) . '</p>';
+		$html .= $this->workflow_features($intent);
+		$html .= '<a class="aidorbit-button" href="' . esc_url($url) . '">' . esc_html($button) . '</a></section>';
+
+		return $html;
+	}
+
+	private function workflow_intent(string $type, array $attributes): array {
+		$query = array_filter(
+			array(
+				'mission' => sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? '')),
+				'program' => sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? '')),
+				'partner' => sanitize_text_field((string) ($attributes['partner'] ?? '')),
+				'referral' => sanitize_text_field((string) ($attributes['referral'] ?? '')),
+			)
+		);
+		$data = $this->api_client->workflow_intent($type, $query);
+		$intent = is_wp_error($data) ? array() : $this->field($data, array('workflowIntent', 'workflow_intent'), array());
+
+		return is_array($intent) ? $intent : array();
+	}
+
+	private function workflow_features(array $intent): string {
+		$features = is_array($intent['features'] ?? null) ? $intent['features'] : array();
+		if (! $features) {
+			return '';
+		}
+
+		$html = '<ul class="aidorbit-workflow-features">';
+		foreach ($features as $feature) {
+			$html .= '<li>' . esc_html(ucwords(str_replace(array('-', '_'), ' ', (string) $feature))) . '</li>';
+		}
+		$html .= '</ul>';
+
+		return $html;
 	}
 
 	private function mission_control_url(string $path, array $attributes = array()): string {
@@ -846,10 +1055,22 @@ final class AidOrbit_Renderer {
 					'team_name'  => sanitize_text_field((string) ($attributes['teamName'] ?? $attributes['team_name'] ?? '')),
 					'team_size'  => sanitize_text_field((string) ($attributes['teamSize'] ?? $attributes['team_size'] ?? '')),
 					'minor_consent' => $this->sanitize_bool_query($attributes['minorConsent'] ?? $attributes['minor_consent'] ?? ''),
+					'referral'   => sanitize_text_field((string) ($attributes['referral'] ?? $attributes['partner'] ?? '')),
+					'campaign'   => sanitize_text_field((string) ($attributes['campaign'] ?? '')),
 				)
 			),
 			$base
 		);
+	}
+
+	private function dashboard_tile_url(string $url, array $attributes): string {
+		if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+			return add_query_arg('return_url', esc_url_raw((string) ($attributes['redirect'] ?? get_permalink() ?: home_url())), $url);
+		}
+
+		$path = preg_replace('#^/mission-control#', '', $url) ?: '/volunteers/me';
+
+		return $this->mission_control_url($path, $attributes);
 	}
 
 	private function mission_path(array $attributes, string $action, string $fallback): string {
@@ -1282,10 +1503,13 @@ final class AidOrbit_Renderer {
 		);
 	}
 
-	private function registration_cta(array $mission, array $attributes): string {
+	private function registration_cta(array $mission, array $attributes, array $intent = array()): string {
 		$id     = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), (string) ($attributes['mission'] ?? ''));
-		$status = $this->normalized_status((string) $this->field($mission, array('registrationStatus', 'registration_status', 'status'), 'open'));
-		$url    = $this->registration_url($id, array_merge($attributes, $mission));
+		$status = $this->normalized_status((string) ($intent['status'] ?? $this->field($mission, array('registrationStatus', 'registration_status', 'status'), 'open')));
+		$url    = (string) ($intent['url'] ?? '');
+		if (! $url) {
+			$url = $this->registration_url($id, array_merge($attributes, $mission));
+		}
 
 		$labels = array(
 			'open'                 => __('Register', 'aidorbit'),
@@ -1296,14 +1520,32 @@ final class AidOrbit_Renderer {
 			'canceled'             => __('Mission canceled', 'aidorbit'),
 			'closed'               => __('Registration closed', 'aidorbit'),
 		);
-		$label    = $labels[$status] ?? __('Register', 'aidorbit');
-		$disabled = in_array($status, array('full', 'canceled', 'closed'), true);
+		$label    = (string) ($intent['label'] ?? $labels[$status] ?? __('Register', 'aidorbit'));
+		$disabled = ! empty($intent['disabled']) || in_array($status, array('full', 'canceled', 'closed'), true);
 
 		if ($disabled) {
 			return '<span class="aidorbit-button aidorbit-button--disabled" aria-disabled="true">' . esc_html($label) . '</span>';
 		}
 
-		return '<a class="aidorbit-button aidorbit-button--' . esc_attr(sanitize_html_class($status)) . '" href="' . esc_url($url) . '">' . esc_html($label) . '</a>';
+		$mode = $this->registration_mode($attributes);
+		$data = '';
+		if ($mode) {
+			$data .= ' data-aidorbit-registration-mode="' . esc_attr($mode) . '"';
+			$data .= ' data-aidorbit-mission-id="' . esc_attr($id) . '"';
+			$data .= ' data-aidorbit-registration-label="' . esc_attr($label) . '"';
+			$messages = is_array($intent['messages'] ?? null) ? $intent['messages'] : array();
+			if ($messages) {
+				$data .= ' data-aidorbit-registration-messages="' . esc_attr(wp_json_encode($messages)) . '"';
+			}
+		}
+
+		return '<a class="aidorbit-button aidorbit-button--' . esc_attr(sanitize_html_class($status)) . '" href="' . esc_url($url) . '"' . $data . '>' . esc_html($label) . '</a>';
+	}
+
+	private function registration_mode(array $attributes): string {
+		$mode = sanitize_key((string) ($attributes['mode'] ?? $attributes['registrationMode'] ?? $attributes['registration_mode'] ?? ''));
+
+		return in_array($mode, array('modal', 'embedded'), true) ? $mode : '';
 	}
 
 	private function normalize_attributes(array $attributes): array {

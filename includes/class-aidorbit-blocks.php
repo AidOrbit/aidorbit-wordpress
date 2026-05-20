@@ -205,6 +205,26 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Impact Counter', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'impact_counter'),
 			),
+			'aidorbit/annual-report' => array(
+				'title'           => __('AidOrbit Annual Report', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'annual_report'),
+			),
+			'aidorbit/program-metrics' => array(
+				'title'           => __('AidOrbit Program Metrics', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'program_metrics'),
+			),
+			'aidorbit/partner-embed' => array(
+				'title'           => __('AidOrbit Partner Embed', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'partner_embed'),
+			),
+			'aidorbit/campaign-landing' => array(
+				'title'           => __('AidOrbit Campaign Landing', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'campaign_landing'),
+			),
+			'aidorbit/mission-reminders' => array(
+				'title'           => __('AidOrbit Mission Reminders', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'mission_reminders'),
+			),
 		);
 
 		foreach ($blocks as $name => $definition) {
@@ -255,6 +275,11 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_thank_you', array($this, 'shortcode_thank_you'));
 		add_shortcode('aidorbit_requirements_checklist', array($this, 'shortcode_requirements_checklist'));
 		add_shortcode('aidorbit_impact_counter', array($this, 'shortcode_impact_counter'));
+		add_shortcode('aidorbit_annual_report', array($this, 'shortcode_annual_report'));
+		add_shortcode('aidorbit_program_metrics', array($this, 'shortcode_program_metrics'));
+		add_shortcode('aidorbit_partner_embed', array($this, 'shortcode_partner_embed'));
+		add_shortcode('aidorbit_campaign_landing', array($this, 'shortcode_campaign_landing'));
+		add_shortcode('aidorbit_mission_reminders', array($this, 'shortcode_mission_reminders'));
 	}
 
 	public function shortcode_program_schedule(mixed $atts): string {
@@ -373,6 +398,26 @@ final class AidOrbit_Blocks {
 		return $this->renderer->impact_counter($this->shortcode_atts($atts));
 	}
 
+	public function shortcode_annual_report(mixed $atts): string {
+		return $this->renderer->annual_report($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_program_metrics(mixed $atts): string {
+		return $this->renderer->program_metrics($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_partner_embed(mixed $atts): string {
+		return $this->renderer->partner_embed($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_campaign_landing(mixed $atts): string {
+		return $this->renderer->campaign_landing($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_mission_reminders(mixed $atts): string {
+		return $this->renderer->mission_reminders($this->shortcode_atts($atts));
+	}
+
 	private function attributes(): array {
 		return array(
 			'program'  => array('type' => 'string', 'default' => ''),
@@ -398,9 +443,11 @@ final class AidOrbit_Blocks {
 			'schema'   => array('type' => 'string', 'default' => ''),
 			'shift'    => array('type' => 'string', 'default' => ''),
 			'role'     => array('type' => 'string', 'default' => ''),
+			'mode'     => array('type' => 'string', 'default' => ''),
 			'redirect' => array('type' => 'string', 'default' => ''),
 			'expires'  => array('type' => 'string', 'default' => ''),
 			'kiosk'    => array('type' => 'string', 'default' => ''),
+			'poster'   => array('type' => 'string', 'default' => ''),
 			'anonymous' => array('type' => 'string', 'default' => ''),
 			'attendanceRequired' => array('type' => 'string', 'default' => ''),
 			'teamName' => array('type' => 'string', 'default' => ''),
@@ -408,6 +455,9 @@ final class AidOrbit_Blocks {
 			'minorConsent' => array('type' => 'string', 'default' => ''),
 			'donateUrl' => array('type' => 'string', 'default' => ''),
 			'shareUrl' => array('type' => 'string', 'default' => ''),
+			'partner' => array('type' => 'string', 'default' => ''),
+			'referral' => array('type' => 'string', 'default' => ''),
+			'campaign' => array('type' => 'string', 'default' => ''),
 			'metrics'  => array('type' => 'string', 'default' => 'hours,volunteers,missions'),
 		);
 	}
@@ -430,6 +480,10 @@ final class AidOrbit_Blocks {
 			'start_date' => 'startDate',
 			'enddate' => 'endDate',
 			'end_date' => 'endDate',
+			'registrationmode' => 'mode',
+			'registration_mode' => 'mode',
+			'printposter' => 'poster',
+			'print_poster' => 'poster',
 			'attendancerequired' => 'attendanceRequired',
 			'attendance_required' => 'attendanceRequired',
 			'teamname' => 'teamName',
@@ -444,6 +498,10 @@ final class AidOrbit_Blocks {
 			'donation_url' => 'donateUrl',
 			'shareurl' => 'shareUrl',
 			'share_url' => 'shareUrl',
+			'partnerid' => 'partner',
+			'partner_id' => 'partner',
+			'referralsource' => 'referral',
+			'referral_source' => 'referral',
 		);
 		$normalized = array();
 		foreach ($atts as $key => $value) {

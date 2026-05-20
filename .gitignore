@@ -36,3 +36,4 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/tasks.json
+docs/v3-task-list.md

@@ -67,10 +67,10 @@ Block: AidOrbit Register CTA
 Shortcode:
 
 ```text
-[aidorbit_register_button mission="12345" shift="678" role="usher"]
+[aidorbit_register_button mission="12345" shift="678" role="usher" mode="modal"]
 ```
 
-Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states.
+Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states. Set `mode="modal"` to open the AidOrbit-hosted registration flow in a WordPress modal while preserving the link fallback when JavaScript is unavailable.
 
 ## Add to Calendar
 
@@ -216,6 +216,8 @@ Shortcode:
 
 Use this as a redirect-first dashboard landing surface. It links Volunteers to AidOrbit-hosted schedule, requirements, hours, and recommendation views, so personalized data is not rendered into public WordPress pages or shared caches.
 
+When the connected AidOrbit API supports dashboard intent metadata, the plugin renders the AidOrbit-provided dashboard entries, including messages. The entries remain sign-in gated and are not cached as personalized WordPress data.
+
 ## My Schedule
 
 Block: AidOrbit My Schedule
@@ -283,10 +285,10 @@ Block: AidOrbit QR Check-In
 Shortcode:
 
 ```text
-[aidorbit_qr_checkin mission="12345" shift="678" expires="2026-06-01T18:00:00Z"]
+[aidorbit_qr_checkin mission="12345" shift="678" expires="2026-06-01T18:00:00Z" poster="yes"]
 ```
 
-Use this on signs, QR-code landing pages, or onsite check-in pages. When a Mission is selected, the block redirects Volunteers into the AidOrbit check-in flow for that Mission. Without a Mission, it opens the general check-in flow.
+Use this on signs, QR-code landing pages, or onsite check-in pages. When a Mission is selected, the block redirects Volunteers into the AidOrbit check-in flow for that Mission. Without a Mission, it opens the general check-in flow. Set `poster="yes"` to render a print-friendly check-in poster with the scoped check-in URL and Mission date when public Mission data is available.
 
 ## Kiosk Check-In
 
@@ -348,6 +350,8 @@ Shortcode:
 
 Use this to show public Mission requirement summaries when AidOrbit returns them. Personalized completion status remains AidOrbit-hosted and is reached through the requirements CTA.
 
+When AidOrbit returns requirements intent metadata, the checklist can show hosted requirement entry types and sign-in-required status labels for forms, waivers, documents, training, approvals, and related readiness steps. Sensitive submissions remain in AidOrbit.
+
 ## Impact Counter
 
 Block: AidOrbit Impact Counter
@@ -359,3 +363,63 @@ Shortcode:
 ```
 
 Use this to display permission-safe public impact totals. The supported MVP metrics are hours, volunteers, and Missions.
+
+## Annual Report
+
+Block: AidOrbit Annual Report
+
+Shortcode:
+
+```text
+[aidorbit_annual_report program="food-pantry" metrics="hours,volunteers,missions"]
+```
+
+Use this on public annual-report pages. The block displays permission-safe public impact totals and AidOrbit-hosted annual report metadata for attendance, retention, and service proof summaries where permitted.
+
+## Program Metrics
+
+Block: AidOrbit Program Metrics
+
+Shortcode:
+
+```text
+[aidorbit_program_metrics program="food-pantry"]
+```
+
+Use this for authenticated staff dashboards. The block routes staff to AidOrbit-hosted Program metrics for active Volunteers, upcoming shifts, open capacity, fill rate, no-show rate, pending approvals, and hours.
+
+## Partner Embed
+
+Block: AidOrbit Partner Embed
+
+Shortcode:
+
+```text
+[aidorbit_partner_embed program="food-pantry" partner="acme" referral="acme-spring"]
+```
+
+Use this on partner, sponsor, corporate volunteer, and community calendar pages. The block renders public-only Mission listings and propagates partner/referral metadata into AidOrbit links and workflow metadata.
+
+## Campaign Landing
+
+Block: AidOrbit Campaign Landing
+
+Shortcode:
+
+```text
+[aidorbit_campaign_landing campaign="holiday" program="food-pantry" limit="9"]
+```
+
+Use this to publish Mission collections for holiday drives, disaster response, corporate service days, family-friendly campaigns, or other recruiting pushes. Starter pages include a draft campaign landing page.
+
+## Mission Reminders
+
+Block: AidOrbit Mission Reminders
+
+Shortcode:
+
+```text
+[aidorbit_mission_reminders mission="12345"]
+```
+
+Use this when Volunteers should manage reminder signup, notification preferences, and Mission messages. The workflow remains AidOrbit-hosted so consent and message history stay authoritative.

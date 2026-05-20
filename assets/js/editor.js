@@ -248,6 +248,10 @@
 		{ label: __('Yes', 'aidorbit'), value: 'yes' },
 		{ label: __('No', 'aidorbit'), value: 'no' }
 	];
+	var registrationModeOptions = [
+		{ label: __('Link', 'aidorbit'), value: '' },
+		{ label: __('Modal', 'aidorbit'), value: 'modal' }
+	];
 
 	register('aidorbit/program-schedule', __('AidOrbit Program Schedule', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
@@ -295,6 +299,7 @@
 	register('aidorbit/register-cta', __('AidOrbit Register CTA', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'mode', label: __('Registration mode', 'aidorbit'), type: 'select', options: registrationModeOptions },
 		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
 		{ name: 'role', label: __('Role ID', 'aidorbit') }
 	]);
@@ -387,6 +392,7 @@
 		{ name: 'shift', label: __('Shift ID', 'aidorbit') },
 		{ name: 'role', label: __('Role ID', 'aidorbit') },
 		{ name: 'expires', label: __('Expiration', 'aidorbit') },
+		{ name: 'poster', label: __('Print poster', 'aidorbit'), type: 'select', options: boolOptions },
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 
@@ -432,5 +438,35 @@
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'range', label: __('Date range', 'aidorbit') },
 		{ name: 'metrics', label: __('Metrics', 'aidorbit') }
+	]);
+
+	register('aidorbit/annual-report', __('AidOrbit Annual Report', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'metrics', label: __('Metrics', 'aidorbit') }
+	]);
+
+	register('aidorbit/program-metrics', __('AidOrbit Program Metrics', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
+	register('aidorbit/partner-embed', __('AidOrbit Partner Embed', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'partner', label: __('Partner ID', 'aidorbit') },
+		{ name: 'referral', label: __('Referral source', 'aidorbit') },
+		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
+	]);
+
+	register('aidorbit/campaign-landing', __('AidOrbit Campaign Landing', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'campaign', label: __('Campaign keyword', 'aidorbit') },
+		{ name: 'range', label: __('Date range', 'aidorbit') },
+		{ name: 'limit', label: __('Limit', 'aidorbit'), type: 'number' }
+	]);
+
+	register('aidorbit/mission-reminders', __('AidOrbit Mission Reminders', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 })(window.wp.apiFetch, window.wp.blocks, window.wp.element, window.wp.components, window.wp.blockEditor, window.wp.serverSideRender, window.wp.i18n);

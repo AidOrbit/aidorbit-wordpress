@@ -44,6 +44,11 @@ Initial MVP surfaces:
 * AidOrbit Thank You block and `[aidorbit_thank_you]`
 * AidOrbit Requirements Checklist block and `[aidorbit_requirements_checklist]`
 * AidOrbit Impact Counter block and `[aidorbit_impact_counter]`
+* AidOrbit Annual Report block and `[aidorbit_annual_report]`
+* AidOrbit Program Metrics block and `[aidorbit_program_metrics]`
+* AidOrbit Partner Embed block and `[aidorbit_partner_embed]`
+* AidOrbit Campaign Landing block and `[aidorbit_campaign_landing]`
+* AidOrbit Mission Reminders block and `[aidorbit_mission_reminders]`
 
 == Setup ==
 

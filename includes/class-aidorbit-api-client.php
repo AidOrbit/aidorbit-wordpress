@@ -75,6 +75,22 @@ final class AidOrbit_Api_Client {
 		return $this->request('/missions/' . rawurlencode($mission_id));
 	}
 
+	public function registration_intent(string $mission_id): array|WP_Error {
+		return $this->request('/missions/' . rawurlencode($mission_id) . '/registration-intent');
+	}
+
+	public function dashboard_intent(): array|WP_Error {
+		return $this->request('/volunteers/me/dashboard-intent');
+	}
+
+	public function requirements_intent(string $mission_id): array|WP_Error {
+		return $this->request('/missions/' . rawurlencode($mission_id) . '/requirements-intent');
+	}
+
+	public function workflow_intent(string $type, array $query = array()): array|WP_Error {
+		return $this->request('/workflow-intents/' . rawurlencode($type), $query);
+	}
+
 	public function impact(array $query = array()): array|WP_Error {
 		$organization_id = $this->settings->get('organization_id', '');
 		if ($organization_id && empty($query['organization'])) {

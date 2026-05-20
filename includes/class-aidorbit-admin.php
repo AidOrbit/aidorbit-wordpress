@@ -215,9 +215,25 @@ final class AidOrbit_Admin {
 				'title'   => __('Volunteer Impact', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/impact-counter {"range":"year","metrics":"hours,volunteers,missions"} /-->',
 			),
+			'annual-report' => array(
+				'title'   => __('Annual Report', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/annual-report {"metrics":"hours,volunteers,missions"} /-->',
+			),
+			'campaign-volunteering' => array(
+				'title'   => __('Campaign Volunteering', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/campaign-landing {"view":"grid","limit":9} /-->',
+			),
+			'partner-missions' => array(
+				'title'   => __('Partner Missions', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/partner-embed {"view":"grid","limit":6} /-->',
+			),
 			'volunteer-check-in' => array(
 				'title'   => __('Volunteer Check-In', 'aidorbit'),
-				'content' => '<!-- wp:aidorbit/qr-checkin /-->',
+				'content' => '<!-- wp:aidorbit/qr-checkin {"poster":"yes"} /-->',
+			),
+			'mission-reminders' => array(
+				'title'   => __('Mission Reminders', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/mission-reminders /-->',
 			),
 			'volunteer-thank-you' => array(
 				'title'   => __('Volunteer Thank You', 'aidorbit'),
