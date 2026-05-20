@@ -299,6 +299,11 @@
 		{ name: 'role', label: __('Role ID', 'aidorbit') }
 	]);
 
+	register('aidorbit/add-to-calendar', __('AidOrbit Add to Calendar', 'aidorbit'), [
+		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
+		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' }
+	]);
+
 	register('aidorbit/organization-profile', __('AidOrbit Organization Profile', 'aidorbit'), []);
 
 	register('aidorbit/donation-cta', __('AidOrbit Donation CTA', 'aidorbit'), [

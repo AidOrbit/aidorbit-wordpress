@@ -72,6 +72,18 @@ Shortcode:
 
 Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states.
 
+## Add to Calendar
+
+Block: AidOrbit Add to Calendar
+
+Shortcode:
+
+```text
+[aidorbit_add_to_calendar mission="12345"]
+```
+
+Use this on Mission detail or campaign pages when visitors should save a public Mission to their calendar before or after registration. The block builds a Google Calendar handoff from the public Mission date, title, location, and registration URL; AidOrbit remains the system of record for registration, capacity, attendance, and schedule updates.
+
 ## Organization Profile
 
 Block: AidOrbit Organization Profile

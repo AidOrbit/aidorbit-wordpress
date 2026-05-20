@@ -271,6 +271,47 @@ final class AidOrbit_Renderer {
 		return '<div class="aidorbit-register-cta">' . $this->registration_cta($mission, $attributes) . '</div>';
 	}
 
+	public function add_to_calendar(array $attributes): string {
+		$this->enqueue_assets();
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $this->notice(__('Select a Mission before showing an add-to-calendar button.', 'aidorbit'));
+		}
+
+		$data = $this->cache->get_or_set(
+			'add_to_calendar',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('This Mission is not available for public calendar sharing.', 'aidorbit'));
+		}
+
+		$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
+		if (! $starts_at || ! strtotime($starts_at)) {
+			return $this->notice(__('Calendar details are not available for this Mission yet.', 'aidorbit'));
+		}
+
+		$title = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
+		$html  = '<section class="aidorbit-surface aidorbit-calendar-cta">';
+		$html .= '<h2>' . esc_html__('Add to Calendar', 'aidorbit') . '</h2>';
+		$html .= '<p>' . esc_html(sprintf(
+			/* translators: %s is a Mission title. */
+			__('Save %s to your calendar. Registration and attendance still stay managed in AidOrbit.', 'aidorbit'),
+			$title
+		)) . '</p>';
+		$html .= '<a class="aidorbit-button" href="' . esc_url($this->calendar_url($mission)) . '">' . esc_html__('Add to Google Calendar', 'aidorbit') . '</a>';
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function program_portal(array $attributes): string {
 		$this->enqueue_assets();
 		$program_id = sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? ''));
@@ -948,6 +989,32 @@ final class AidOrbit_Renderer {
 		}
 
 		return '<script type="application/ld+json">' . wp_json_encode(array_filter($schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+	}
+
+	private function calendar_url(array $mission): string {
+		$title     = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
+		$summary   = (string) $this->field($mission, array('summary', 'description'), '');
+		$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
+		$ends_at   = (string) $this->field($mission, array('endsAt', 'ends_at', 'end'), '');
+		$is_virtual = (bool) $this->field($mission, array('isVirtual', 'is_virtual', 'virtual'), false);
+		$location  = $is_virtual
+			? __('Virtual', 'aidorbit')
+			: (string) $this->field($mission, array('locationName', 'location_name', 'location'), '');
+
+		$start = (int) strtotime($starts_at);
+		$end   = $ends_at && strtotime($ends_at) ? (int) strtotime($ends_at) : $start + HOUR_IN_SECONDS;
+		$details = trim($summary . "\n\n" . __('Register and manage attendance in AidOrbit:', 'aidorbit') . ' ' . $this->registration_url((string) $this->field($mission, array('id', 'missionId', 'mission_id'), ''), $mission));
+
+		return add_query_arg(
+			array(
+				'action'   => 'TEMPLATE',
+				'text'     => $title,
+				'dates'    => gmdate('Ymd\THis\Z', $start) . '/' . gmdate('Ymd\THis\Z', $end),
+				'details'  => $details,
+				'location' => $location,
+			),
+			'https://calendar.google.com/calendar/render'
+		);
 	}
 
 	private function empty_state(array $attributes): string {
