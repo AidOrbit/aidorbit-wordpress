@@ -22,6 +22,7 @@ Initial MVP surfaces:
 * AidOrbit Add to Calendar block and `[aidorbit_add_to_calendar]`
 * AidOrbit Share Mission block and `[aidorbit_share_mission]`
 * AidOrbit Mission Location block and `[aidorbit_mission_location]`
+* AidOrbit Mission Countdown block and `[aidorbit_mission_countdown]`
 * AidOrbit Organization Profile block and `[aidorbit_organization_profile]`
 * AidOrbit Donation CTA block and `[aidorbit_donation_cta]`
 * AidOrbit Program Portal block and `[aidorbit_program_portal]`

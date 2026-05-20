@@ -429,6 +429,53 @@ final class AidOrbit_Renderer {
 		return $html;
 	}
 
+	public function mission_countdown(array $attributes): string {
+		$this->enqueue_assets();
+		$mission_id = sanitize_text_field((string) ($attributes['mission'] ?? $attributes['missionId'] ?? ''));
+		if (! $mission_id) {
+			return $this->notice(__('Select a Mission before showing a countdown.', 'aidorbit'));
+		}
+
+		$data = $this->cache->get_or_set(
+			'mission_countdown',
+			array('mission' => $mission_id),
+			fn () => $this->api_client->mission($mission_id),
+			(int) $this->settings->get('capacity_cache_ttl', 30)
+		);
+		if (is_wp_error($data)) {
+			return $this->notice($data->get_error_message(), true);
+		}
+
+		$mission = $this->extract_single($data);
+		if (! $this->is_public_mission($mission)) {
+			return $this->notice(__('This Mission is not available for public countdown display.', 'aidorbit'));
+		}
+
+		$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
+		$start     = $starts_at ? strtotime($starts_at) : false;
+		if (! $start) {
+			return $this->notice(__('Countdown timing is not available for this Mission yet.', 'aidorbit'));
+		}
+
+		$title    = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
+		$timezone = (string) $this->field($mission, array('timezone', 'timeZone', 'time_zone'), '');
+		$delta    = $start - time();
+		$label    = $delta > 0 ? $this->duration_label($delta) : __('Started', 'aidorbit');
+
+		$html  = '<section class="aidorbit-surface aidorbit-mission-countdown">';
+		$html .= '<h2>' . esc_html__('Mission Countdown', 'aidorbit') . '</h2>';
+		$html .= '<p class="aidorbit-meta">' . esc_html($title) . '</p>';
+		$html .= '<div class="aidorbit-countdown-value">' . esc_html($label) . '</div>';
+		$html .= '<p>' . esc_html(sprintf(
+			/* translators: %s is a formatted Mission start date and time. */
+			__('Starts %s', 'aidorbit'),
+			$this->format_datetime($starts_at, $timezone)
+		)) . '</p>';
+		$html .= '</section>';
+
+		return $html;
+	}
+
 	public function program_portal(array $attributes): string {
 		$this->enqueue_assets();
 		$program_id = sanitize_text_field((string) ($attributes['program'] ?? $attributes['programId'] ?? ''));
@@ -1131,6 +1178,34 @@ final class AidOrbit_Renderer {
 				'location' => $location,
 			),
 			'https://calendar.google.com/calendar/render'
+		);
+	}
+
+	private function duration_label(int $seconds): string {
+		$days = intdiv($seconds, DAY_IN_SECONDS);
+		if ($days >= 1) {
+			return sprintf(
+				/* translators: %s is a number of days. */
+				_n('%s day', '%s days', $days, 'aidorbit'),
+				number_format_i18n($days)
+			);
+		}
+
+		$hours = intdiv($seconds, HOUR_IN_SECONDS);
+		if ($hours >= 1) {
+			return sprintf(
+				/* translators: %s is a number of hours. */
+				_n('%s hour', '%s hours', $hours, 'aidorbit'),
+				number_format_i18n($hours)
+			);
+		}
+
+		$minutes = max(1, intdiv($seconds, MINUTE_IN_SECONDS));
+
+		return sprintf(
+			/* translators: %s is a number of minutes. */
+			_n('%s minute', '%s minutes', $minutes, 'aidorbit'),
+			number_format_i18n($minutes)
 		);
 	}
 

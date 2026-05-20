@@ -108,6 +108,18 @@ Shortcode:
 
 Use this on Mission detail, campaign, and event logistics pages when the location needs to stand alone from the full Mission card. The block renders the public location name, address, and directions link when AidOrbit returns those fields. Virtual Missions show a virtual-location notice instead of exposing private connection details.
 
+## Mission Countdown
+
+Block: AidOrbit Mission Countdown
+
+Shortcode:
+
+```text
+[aidorbit_mission_countdown mission="12345"]
+```
+
+Use this on campaign, event, and recruitment pages when the start time should be emphasized apart from the full Mission card. The block renders a days, hours, or minutes countdown from the public Mission start date and keeps registration, schedule changes, and attendance in AidOrbit.
+
 ## Organization Profile
 
 Block: AidOrbit Organization Profile

@@ -49,7 +49,7 @@ When the plugin is connected, Program-aware blocks load authorized Programs into
 
 The picker is scoped by the saved AidOrbit token, organization ID, and optional allowed Program list. It does not expose API tokens to the browser.
 
-Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Check-In, Feedback Form, and Requirements Checklist blocks.
+Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Mission Countdown, Check-In, Feedback Form, and Requirements Checklist blocks.
 
 ## Webhook Cache Invalidation
 

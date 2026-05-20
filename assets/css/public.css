@@ -252,6 +252,14 @@
 	margin-block: 0;
 }
 
+.aidorbit-countdown-value {
+	font-size: clamp(2rem, 8vw, 4.5rem);
+	line-height: 1;
+	font-weight: 800;
+	letter-spacing: 0;
+	color: var(--aidorbit-accent, #0f766e);
+}
+
 .aidorbit-finder-form {
 	display: flex;
 	flex-wrap: wrap;
