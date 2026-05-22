@@ -55,7 +55,7 @@ The picker is scoped by the saved AidOrbit token, organization ID, and optional 
 
 Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Mission Countdown, Check-In, Feedback Form, and Requirements Checklist blocks.
 
-Register CTA supports a modal registration mode. The modal loads the AidOrbit-hosted registration flow so capacity, duplicate prevention, waitlist, approval, schedule conflict, and eligibility checks remain enforced by AidOrbit. If JavaScript is unavailable, the CTA remains a normal link to AidOrbit.
+Register CTA supports a modal registration mode. The modal loads the AidOrbit-hosted registration flow so capacity, duplicate prevention, waitlist, approval, schedule conflict, eligibility checks, and background-check consent remain enforced by AidOrbit. If JavaScript is unavailable, the CTA remains a normal link to AidOrbit.
 
 ## Webhook Cache Invalidation
 
@@ -69,7 +69,7 @@ For early integrations, the endpoint also accepts the shared secret in the `x-ai
 
 ## Privacy Notes
 
-The plugin does not store authoritative Volunteer profile, registration, eligibility, document, waiver, form, hour, attendance, feedback, or recognition data in WordPress. Public Mission and Program responses may be cached in WordPress transients. Personalized Volunteer dashboard, check-in, feedback, and recognition surfaces redirect to AidOrbit-hosted flows.
+The plugin does not store authoritative Volunteer profile, registration, eligibility, document, waiver, form, background-check consent, hour, attendance, feedback, or recognition data in WordPress. Public Mission and Program responses may be cached in WordPress transients. Personalized Volunteer dashboard, check-in, feedback, requirements, and recognition surfaces redirect to AidOrbit-hosted flows.
 
 ## Aggregate Analytics
 

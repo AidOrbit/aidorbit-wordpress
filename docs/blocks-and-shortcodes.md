@@ -70,7 +70,7 @@ Shortcode:
 [aidorbit_register_button mission="12345" shift="678" role="usher" mode="modal"]
 ```
 
-Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states. Set `mode="modal"` to open the AidOrbit-hosted registration flow in a WordPress modal while preserving the link fallback when JavaScript is unavailable.
+Use this when a page already describes the Mission and only needs a registration entry point. The CTA reflects open, full, waitlist, approval-required, requirements-blocked, canceled, and closed states. Set `mode="modal"` to open the AidOrbit-hosted registration flow in a WordPress modal while preserving the link fallback when JavaScript is unavailable. If a background check is required, consent is collected by the AidOrbit-hosted flow before AidOrbit creates any provider invitation.
 
 ## Add to Calendar
 
@@ -350,7 +350,7 @@ Shortcode:
 
 Use this to show public Mission requirement summaries when AidOrbit returns them. Personalized completion status remains AidOrbit-hosted and is reached through the requirements CTA.
 
-When AidOrbit returns requirements intent metadata, the checklist can show hosted requirement entry types and sign-in-required status labels for forms, waivers, documents, training, approvals, and related readiness steps. Sensitive submissions remain in AidOrbit.
+When AidOrbit returns requirements intent metadata, the checklist can show hosted requirement entry types and sign-in-required status labels for forms, waivers, documents, training, approvals, background checks, and related readiness steps. Sensitive submissions and background-check consent records remain in AidOrbit.
 
 ## Impact Counter
 
