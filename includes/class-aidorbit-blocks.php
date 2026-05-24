@@ -169,6 +169,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit Recommended Missions', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'recommended_missions'),
 			),
+			'aidorbit/account-security' => array(
+				'title'           => __('AidOrbit Account Security', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'account_security'),
+			),
 			'aidorbit/team-registration' => array(
 				'title'           => __('AidOrbit Team Registration', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'team_registration'),
@@ -266,6 +270,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_my_requirements', array($this, 'shortcode_my_requirements'));
 		add_shortcode('aidorbit_my_hours', array($this, 'shortcode_my_hours'));
 		add_shortcode('aidorbit_recommended_missions', array($this, 'shortcode_recommended_missions'));
+		add_shortcode('aidorbit_account_security', array($this, 'shortcode_account_security'));
 		add_shortcode('aidorbit_team_registration', array($this, 'shortcode_team_registration'));
 		add_shortcode('aidorbit_qr_checkin', array($this, 'shortcode_qr_checkin'));
 		add_shortcode('aidorbit_kiosk_checkin', array($this, 'shortcode_kiosk_checkin'));
@@ -364,6 +369,10 @@ final class AidOrbit_Blocks {
 
 	public function shortcode_recommended_missions(mixed $atts): string {
 		return $this->renderer->recommended_missions($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_account_security(mixed $atts): string {
+		return $this->renderer->account_security($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_team_registration(mixed $atts): string {

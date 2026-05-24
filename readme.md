@@ -83,6 +83,8 @@ The plugin also supports optional allowed Program scoping, webhook cache invalid
 - Publishes redirect-first Volunteer dashboard surfaces.
 - Renders AidOrbit-provided dashboard intent entries and messages when available.
 - Publishes focused sign-in entry points for My Schedule, My Requirements, My Hours, and Recommended Missions.
+- Publishes Account Security entry points for AidOrbit-hosted two-factor authentication setup and recovery.
+- Keeps two-factor authentication enrollment, authenticator QR-code generation, verification, and disablement in AidOrbit.
 - Publishes team, family, partner, and group registration entry points.
 - Opens AidOrbit-hosted team registration flows for selected Missions or general team registration.
 - Publishes QR Check-In entry points.
@@ -118,6 +120,7 @@ The plugin can create these draft starter pages:
 - Volunteer Dashboard
 - My Schedule
 - Recommended Missions
+- Account Security
 - Team Registration
 - Volunteer Impact
 - Annual Report
@@ -146,6 +149,7 @@ The plugin can create these draft starter pages:
 - Limits editor REST endpoints to users who can edit posts.
 - Sanitizes API query parameters before remote requests.
 - Uses bearer-token authenticated requests to AidOrbit.
+- Sends only read requests to the AidOrbit WordPress API contract; WordPress-hosted entry points that change state redirect to AidOrbit, so the plugin does not generate `Idempotency-Key` headers for AidOrbit mutations.
 
 ## Blocks and Shortcodes
 
@@ -172,6 +176,7 @@ The plugin can create these draft starter pages:
 | AidOrbit My Requirements | `[aidorbit_my_requirements]` |
 | AidOrbit My Hours | `[aidorbit_my_hours]` |
 | AidOrbit Recommended Missions | `[aidorbit_recommended_missions]` |
+| AidOrbit Account Security | `[aidorbit_account_security]` |
 | AidOrbit Team Registration | `[aidorbit_team_registration]` |
 | AidOrbit QR Check-In | `[aidorbit_qr_checkin]` |
 | AidOrbit Kiosk Check-In | `[aidorbit_kiosk_checkin]` |

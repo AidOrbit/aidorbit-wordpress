@@ -231,6 +231,10 @@ final class AidOrbit_Admin {
 				'title'   => __('Volunteer Check-In', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/qr-checkin {"poster":"yes"} /-->',
 			),
+			'account-security' => array(
+				'title'   => __('Account Security', 'aidorbit'),
+				'content' => '<!-- wp:aidorbit/account-security /-->',
+			),
 			'mission-reminders' => array(
 				'title'   => __('Mission Reminders', 'aidorbit'),
 				'content' => '<!-- wp:aidorbit/mission-reminders /-->',

@@ -375,6 +375,10 @@
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 
+	register('aidorbit/account-security', __('AidOrbit Account Security', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
 	register('aidorbit/team-registration', __('AidOrbit Team Registration', 'aidorbit'), [
 		{ name: 'program', label: __('Program', 'aidorbit'), type: 'program' },
 		{ name: 'mission', label: __('Mission', 'aidorbit'), type: 'mission' },

@@ -204,6 +204,20 @@ Shortcode:
 
 Use this as the sign-in entry point for Volunteers. Initial dashboard widgets are redirect-first and remain AidOrbit-hosted.
 
+## Account Security
+
+Block: AidOrbit Account Security
+
+Shortcode:
+
+```text
+[aidorbit_account_security redirect="https://example.org/volunteer-dashboard"]
+```
+
+Use this when Volunteers or staff need a WordPress entry point for AidOrbit-hosted two-factor authentication. The block links to AidOrbit profile security, where setup requires the AidOrbit-generated authenticator QR code and six-digit verification code. WordPress does not store TOTP secrets or render the setup QR code.
+
+The block is redirect-only and does not mutate AidOrbit state, so it does not send an `Idempotency-Key` header.
+
 ## Volunteer Dashboard
 
 Block: AidOrbit Volunteer Dashboard

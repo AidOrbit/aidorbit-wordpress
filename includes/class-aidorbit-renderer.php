@@ -679,6 +679,18 @@ final class AidOrbit_Renderer {
 		);
 	}
 
+	public function account_security(array $attributes): string {
+		$this->enqueue_assets();
+
+		return $this->volunteer_action_panel(
+			__('Account Security', 'aidorbit'),
+			__('Set up or manage two-factor authentication in AidOrbit. Setup opens AidOrbit profile security, where the authenticator QR code is generated and verified by AidOrbit.', 'aidorbit'),
+			__('Manage two-factor authentication', 'aidorbit'),
+			'/my/profile?tab=security',
+			$attributes
+		);
+	}
+
 	public function team_registration(array $attributes): string {
 		$this->enqueue_assets();
 		return $this->workflow_action_panel(

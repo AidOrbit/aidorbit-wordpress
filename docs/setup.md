@@ -35,6 +35,7 @@ On Settings > AidOrbit, select Create starter pages. The plugin creates these dr
 - Volunteer Dashboard: a sign-in entry point for Volunteers.
 - My Schedule: a focused Volunteer schedule sign-in entry point.
 - Recommended Missions: a focused sign-in entry point for personalized Mission recommendations.
+- Account Security: a focused entry point for AidOrbit-hosted two-factor authentication setup and recovery.
 - Team Registration: an AidOrbit-hosted group, family, partner, or team registration entry point.
 - Volunteer Impact: a public impact counter page.
 - Annual Report: a public annual impact and reporting page.
@@ -56,6 +57,14 @@ The picker is scoped by the saved AidOrbit token, organization ID, and optional 
 Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Mission Countdown, Check-In, Feedback Form, and Requirements Checklist blocks.
 
 Register CTA supports a modal registration mode. The modal loads the AidOrbit-hosted registration flow so capacity, duplicate prevention, waitlist, approval, schedule conflict, eligibility checks, and background-check consent remain enforced by AidOrbit. If JavaScript is unavailable, the CTA remains a normal link to AidOrbit.
+
+## Two-Factor Authentication
+
+Use the Account Security block or `[aidorbit_account_security]` shortcode when a WordPress site needs a volunteer-facing entry point for two-factor authentication.
+
+The plugin redirects users to AidOrbit profile security for setup. AidOrbit generates the authenticator QR code, verifies the six-digit code, enforces organization staff 2FA policies, and remains the source of truth for enrollment state. The WordPress plugin does not store TOTP secrets, render setup QR codes, or call AidOrbit 2FA mutation endpoints.
+
+Because the plugin only sends read requests to the AidOrbit WordPress API contract and redirects mutating workflows to AidOrbit, it does not add `Idempotency-Key` headers. If a future plugin feature directly calls AidOrbit POST, PUT, PATCH, or DELETE endpoints, that request must send a unique `Idempotency-Key` header.
 
 ## Webhook Cache Invalidation
 
