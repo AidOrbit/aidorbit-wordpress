@@ -684,9 +684,9 @@ final class AidOrbit_Renderer {
 
 		return $this->volunteer_action_panel(
 			__('Account Security', 'aidorbit'),
-			__('Set up or manage two-factor authentication in AidOrbit. Setup opens AidOrbit profile security, where the authenticator QR code is generated and verified by AidOrbit.', 'aidorbit'),
+			__('Set up or manage two-factor authentication in AidOrbit. Setup opens AidOrbit Account Settings, where the authenticator QR code is generated and verified by AidOrbit.', 'aidorbit'),
 			__('Manage two-factor authentication', 'aidorbit'),
-			'/my/profile?tab=security',
+			'/account/settings',
 			$attributes
 		);
 	}

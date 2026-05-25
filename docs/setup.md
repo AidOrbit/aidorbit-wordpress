@@ -62,7 +62,7 @@ Register CTA supports a modal registration mode. The modal loads the AidOrbit-ho
 
 Use the Account Security block or `[aidorbit_account_security]` shortcode when a WordPress site needs a volunteer-facing entry point for two-factor authentication.
 
-The plugin redirects users to AidOrbit profile security for setup. AidOrbit generates the authenticator QR code, verifies the six-digit code, enforces organization staff 2FA policies, and remains the source of truth for enrollment state. The WordPress plugin does not store TOTP secrets, render setup QR codes, or call AidOrbit 2FA mutation endpoints.
+The plugin redirects users to AidOrbit Account Settings for setup. AidOrbit generates the authenticator QR code, verifies the six-digit code, enforces organization staff 2FA policies, and remains the source of truth for enrollment state. The WordPress plugin does not store TOTP secrets, render setup QR codes, or call AidOrbit 2FA mutation endpoints.
 
 Because the plugin only sends read requests to the AidOrbit WordPress API contract and redirects mutating workflows to AidOrbit, it does not add `Idempotency-Key` headers. If a future plugin feature directly calls AidOrbit POST, PUT, PATCH, or DELETE endpoints, that request must send a unique `Idempotency-Key` header.
 
