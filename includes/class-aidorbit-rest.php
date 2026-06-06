@@ -113,7 +113,7 @@ final class AidOrbit_Rest {
 	public function programs(): WP_REST_Response|WP_Error {
 		$data = $this->cache->get_or_set(
 			'program_options',
-			array('organization' => (string) $this->settings->get('organization_id', '')),
+			array('token_scope' => 'current'),
 			fn () => $this->api_client->programs(array('limit' => 100)),
 			(int) $this->settings->get('public_cache_ttl', 300)
 		);

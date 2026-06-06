@@ -64,14 +64,10 @@ final class AidOrbit_Admin {
 						<td><input class="regular-text" id="aidorbit_mission_control_url" name="mission_control_url" type="url" value="<?php echo esc_attr($settings['mission_control_url']); ?>" required></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="aidorbit_organization_id"><?php esc_html_e('Organization ID', 'aidorbit'); ?></label></th>
-						<td><input class="regular-text" id="aidorbit_organization_id" name="organization_id" type="text" value="<?php echo esc_attr($settings['organization_id']); ?>"></td>
-					</tr>
-					<tr>
 						<th scope="row"><label for="aidorbit_allowed_programs"><?php esc_html_e('Allowed Programs', 'aidorbit'); ?></label></th>
 						<td>
 							<textarea class="large-text code" id="aidorbit_allowed_programs" name="allowed_programs" rows="4" placeholder="<?php echo esc_attr__('One Program ID per line. Leave blank to allow all token-authorized Programs.', 'aidorbit'); ?>"><?php echo esc_textarea(implode("\n", is_array($settings['allowed_programs']) ? $settings['allowed_programs'] : array())); ?></textarea>
-							<p class="description"><?php esc_html_e('Limits editor pickers and public Program-specific blocks to selected Program IDs.', 'aidorbit'); ?></p>
+							<p class="description"><?php esc_html_e('Limits editor pickers and public Program-specific blocks to selected Program IDs within the saved API token scope.', 'aidorbit'); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -300,7 +296,6 @@ final class AidOrbit_Admin {
 			'settings'     => array(
 				'api_base_url'           => $settings['api_base_url'],
 				'mission_control_url'    => $settings['mission_control_url'],
-				'organization_id'        => $settings['organization_id'],
 				'allowed_programs'       => $settings['allowed_programs'],
 				'public_cache_ttl'       => $settings['public_cache_ttl'],
 				'capacity_cache_ttl'     => $settings['capacity_cache_ttl'],
@@ -348,7 +343,7 @@ final class AidOrbit_Admin {
 			'settings-saved'     => __('AidOrbit settings saved.', 'aidorbit'),
 			'cache-cleared'      => __('AidOrbit public cache cleared.', 'aidorbit'),
 			'connection-ok'      => __('AidOrbit connection succeeded.', 'aidorbit'),
-			'connection-failed'  => __('AidOrbit connection failed. Check the API URL, token, and organization scope.', 'aidorbit'),
+			'connection-failed'  => __('AidOrbit connection failed. Check the API URL and token scope.', 'aidorbit'),
 			'pages-created'      => __('AidOrbit starter pages created as drafts.', 'aidorbit'),
 			'diagnostics-cleared' => __('AidOrbit diagnostics cleared.', 'aidorbit'),
 		);
@@ -446,7 +441,6 @@ final class AidOrbit_Admin {
 		$items = array(
 			__('API base URL', 'aidorbit')        => ! empty($settings['api_base_url']),
 			__('Mission Control URL', 'aidorbit') => ! empty($settings['mission_control_url']),
-			__('Organization ID', 'aidorbit')     => ! empty($settings['organization_id']),
 			__('API token', 'aidorbit')           => '' !== $token,
 			__('Webhook secret', 'aidorbit')      => ! empty($settings['webhook_secret']),
 			__('Public cache TTL', 'aidorbit')    => absint($settings['public_cache_ttl'] ?? 0) >= 30,

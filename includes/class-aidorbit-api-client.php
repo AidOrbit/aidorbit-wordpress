@@ -17,10 +17,7 @@ final class AidOrbit_Api_Client {
 	}
 
 	public function health(): array|WP_Error {
-		$organization_id = $this->settings->get('organization_id', '');
-		$path            = $organization_id ? '/organizations/' . rawurlencode((string) $organization_id) . '/programs' : '/organizations';
-
-		return $this->request($path, array('limit' => 1));
+		return $this->request('/programs', array('limit' => 1));
 	}
 
 	public function organizations(array $query = array()): array|WP_Error {
@@ -28,11 +25,6 @@ final class AidOrbit_Api_Client {
 	}
 
 	public function programs(array $query = array()): array|WP_Error {
-		$organization_id = $this->settings->get('organization_id', '');
-		if ($organization_id) {
-			return $this->request('/organizations/' . rawurlencode((string) $organization_id) . '/programs', $query);
-		}
-
 		return $this->request('/programs', $query);
 	}
 
@@ -55,11 +47,6 @@ final class AidOrbit_Api_Client {
 				return new WP_Error('aidorbit_program_forbidden', __('This Program is not enabled for this WordPress site.', 'aidorbit'));
 			}
 			return $this->request('/programs/' . rawurlencode($program_id) . '/missions', $query);
-		}
-
-		$organization_id = $this->settings->get('organization_id', '');
-		if ($organization_id) {
-			return $this->request('/organizations/' . rawurlencode((string) $organization_id) . '/missions', $query);
 		}
 
 		return $this->request('/missions', $query);
@@ -92,11 +79,6 @@ final class AidOrbit_Api_Client {
 	}
 
 	public function impact(array $query = array()): array|WP_Error {
-		$organization_id = $this->settings->get('organization_id', '');
-		if ($organization_id && empty($query['organization'])) {
-			$query['organization'] = (string) $organization_id;
-		}
-
 		return $this->request('/impact', $query);
 	}
 

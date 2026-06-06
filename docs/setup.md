@@ -12,15 +12,14 @@ Use this guide if you manage a nonprofit WordPress site and need to publish live
 2. Open Settings > AidOrbit.
 3. Enter the AidOrbit API base URL. New installs default to the WordPress contract at `/mission-control/api/v1/wordpress`.
 4. Enter the Mission Control URL used for volunteer sign-in and registration redirects.
-5. Enter the AidOrbit organization ID.
-6. Paste an AidOrbit API key scoped to the organization or Programs this site can publish. The key should include `missions.read`; add `reports.read` or `hours.read` when using Impact Counter blocks.
-7. Optionally enter allowed Program IDs, one per line, when the site should publish only a subset of token-authorized Programs.
-8. Paste a webhook secret for cache invalidation.
-9. Choose public cache TTLs.
-10. Choose an accent color that works with the active WordPress theme.
-11. Choose whether aggregate analytics are enabled.
-12. Save settings.
-13. Run Test connection.
+5. Paste an AidOrbit API key scoped to the organization or Programs this site can publish. The key should include `missions.read`; add `reports.read` or `hours.read` when using Impact Counter blocks.
+6. Optionally enter allowed Program IDs, one per line, when the site should publish only a subset of token-authorized Programs.
+7. Paste a webhook secret for cache invalidation.
+8. Choose public cache TTLs.
+9. Choose an accent color that works with the active WordPress theme.
+10. Choose whether aggregate analytics are enabled.
+11. Save settings.
+12. Run Test connection.
 
 API tokens and webhook secrets are write-only in the settings screen. They are stored in non-autoloaded WordPress options and are not printed back into admin HTML.
 
@@ -52,7 +51,7 @@ Review and publish the drafts when the page title, URL, and surrounding site con
 
 When the plugin is connected, Program-aware blocks load authorized Programs into the block sidebar. Editors can select a Program from the list or paste a Program ID manually when troubleshooting or preparing content before the connection is available.
 
-The picker is scoped by the saved AidOrbit token, organization ID, and optional allowed Program list. It does not expose API tokens to the browser.
+The picker is scoped by the saved AidOrbit token and optional allowed Program list. It does not expose API tokens to the browser.
 
 Mission-aware blocks also load public authorized Missions. Selecting a Program narrows the Mission options shown for Mission Detail, Register CTA, Add to Calendar, Share Mission, Mission Location, Mission Countdown, Check-In, Feedback Form, and Requirements Checklist blocks.
 

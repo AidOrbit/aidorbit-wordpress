@@ -16,7 +16,6 @@ final class AidOrbit_Settings {
 	public static function defaults(): array {
 		return array(
 			'api_base_url'           => 'https://app.aidorbit.com/mission-control/api/v1/wordpress',
-			'organization_id'        => '',
 			'allowed_programs'       => array(),
 			'public_cache_ttl'       => 300,
 			'capacity_cache_ttl'     => 30,
@@ -67,7 +66,6 @@ final class AidOrbit_Settings {
 		$current = $this->all();
 		$next    = array(
 			'api_base_url'           => esc_url_raw((string) ($input['api_base_url'] ?? $current['api_base_url'])),
-			'organization_id'        => sanitize_text_field((string) ($input['organization_id'] ?? $current['organization_id'])),
 			'allowed_programs'       => $this->sanitize_programs($input['allowed_programs'] ?? $current['allowed_programs']),
 			'public_cache_ttl'       => $this->sanitize_ttl($input['public_cache_ttl'] ?? $current['public_cache_ttl'], 30, 3600),
 			'capacity_cache_ttl'     => $this->sanitize_ttl($input['capacity_cache_ttl'] ?? $current['capacity_cache_ttl'], 5, 300),

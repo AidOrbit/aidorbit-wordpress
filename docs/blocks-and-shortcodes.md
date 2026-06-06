@@ -166,7 +166,7 @@ Shortcode:
 [aidorbit_program_directory view="grid" limit="12"]
 ```
 
-Use this when a WordPress site needs a public directory of authorized Programs. The block uses the saved AidOrbit API key, organization ID, and optional allowed Program list; Program CTAs route to AidOrbit so authoritative Program pages and volunteer actions stay in Mission Control.
+Use this when a WordPress site needs a public directory of authorized Programs. The block uses the saved AidOrbit API key and optional allowed Program list; Program CTAs route to AidOrbit so authoritative Program pages and volunteer actions stay in Mission Control.
 
 ## Contact Program Staff
 

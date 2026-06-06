@@ -20,7 +20,7 @@ The plugin also supports optional allowed Program scoping, webhook cache invalid
 ### AidOrbit Connection and Administration
 
 - Connects WordPress to the AidOrbit WordPress API contract.
-- Stores the AidOrbit API base URL, Mission Control URL, organization ID, API token, webhook secret, cache TTLs, accent color, debug mode, and aggregate analytics setting.
+- Stores the AidOrbit API base URL, Mission Control URL, API token, webhook secret, cache TTLs, accent color, debug mode, and aggregate analytics setting.
 - Stores API tokens and webhook secrets as non-autoloaded WordPress options.
 - Keeps saved API tokens and webhook secrets write-only in the settings UI.
 - Tests the AidOrbit connection from Settings > AidOrbit.
@@ -196,7 +196,7 @@ The plugin can create these draft starter pages:
 
 1. Activate the plugin.
 2. Open Settings > AidOrbit.
-3. Enter the AidOrbit API base URL, Mission Control URL, organization ID, API key, public cache TTLs, and webhook secret. New installs default to `/mission-control/api/v1/wordpress`.
+3. Enter the AidOrbit API base URL, Mission Control URL, API key, public cache TTLs, and webhook secret. New installs default to `/mission-control/api/v1/wordpress`.
 4. Test the connection.
 5. Optionally create starter pages as drafts.
 6. Add AidOrbit blocks to pages, or use the shortcode fallbacks.
