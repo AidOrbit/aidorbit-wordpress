@@ -268,6 +268,18 @@ Shortcode:
 
 Use this as a focused sign-in entry point for hours and proof-of-service details.
 
+## My Availability
+
+Block: AidOrbit My Availability
+
+Shortcode:
+
+```text
+[aidorbit_my_availability]
+```
+
+Use this as a focused sign-in entry point for the AidOrbit availability planner. The hosted planner supports general recurring availability such as every weekend, each weekday, every day, and custom recurring or one-time windows.
+
 ## Recommended Missions
 
 Block: AidOrbit Recommended Missions

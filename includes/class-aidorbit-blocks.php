@@ -165,6 +165,10 @@ final class AidOrbit_Blocks {
 				'title'           => __('AidOrbit My Hours', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'my_hours'),
 			),
+			'aidorbit/my-availability' => array(
+				'title'           => __('AidOrbit My Availability', 'aidorbit'),
+				'render_callback' => array($this->renderer, 'my_availability'),
+			),
 			'aidorbit/recommended-missions' => array(
 				'title'           => __('AidOrbit Recommended Missions', 'aidorbit'),
 				'render_callback' => array($this->renderer, 'recommended_missions'),
@@ -269,6 +273,7 @@ final class AidOrbit_Blocks {
 		add_shortcode('aidorbit_my_schedule', array($this, 'shortcode_my_schedule'));
 		add_shortcode('aidorbit_my_requirements', array($this, 'shortcode_my_requirements'));
 		add_shortcode('aidorbit_my_hours', array($this, 'shortcode_my_hours'));
+		add_shortcode('aidorbit_my_availability', array($this, 'shortcode_my_availability'));
 		add_shortcode('aidorbit_recommended_missions', array($this, 'shortcode_recommended_missions'));
 		add_shortcode('aidorbit_account_security', array($this, 'shortcode_account_security'));
 		add_shortcode('aidorbit_team_registration', array($this, 'shortcode_team_registration'));
@@ -365,6 +370,10 @@ final class AidOrbit_Blocks {
 
 	public function shortcode_my_hours(mixed $atts): string {
 		return $this->renderer->my_hours($this->shortcode_atts($atts));
+	}
+
+	public function shortcode_my_availability(mixed $atts): string {
+		return $this->renderer->my_availability($this->shortcode_atts($atts));
 	}
 
 	public function shortcode_recommended_missions(mixed $atts): string {

@@ -175,6 +175,7 @@ The plugin can create these draft starter pages:
 | AidOrbit My Schedule | `[aidorbit_my_schedule]` |
 | AidOrbit My Requirements | `[aidorbit_my_requirements]` |
 | AidOrbit My Hours | `[aidorbit_my_hours]` |
+| AidOrbit My Availability | `[aidorbit_my_availability]` |
 | AidOrbit Recommended Missions | `[aidorbit_recommended_missions]` |
 | AidOrbit Account Security | `[aidorbit_account_security]` |
 | AidOrbit Team Registration | `[aidorbit_team_registration]` |

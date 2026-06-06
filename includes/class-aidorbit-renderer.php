@@ -616,6 +616,7 @@ final class AidOrbit_Renderer {
 				array('title' => __('My Schedule', 'aidorbit'), 'summary' => __('Review upcoming Missions and registration status.', 'aidorbit'), 'url' => '/volunteers/me/schedule'),
 				array('title' => __('My Requirements', 'aidorbit'), 'summary' => __('Complete waivers, forms, training, and other readiness steps.', 'aidorbit'), 'url' => '/volunteers/me/requirements'),
 				array('title' => __('My Hours', 'aidorbit'), 'summary' => __('View submitted hours and proof-of-service details.', 'aidorbit'), 'url' => '/volunteers/me/hours'),
+				array('title' => __('My Availability', 'aidorbit'), 'summary' => __('Set recurring availability such as every weekend, each weekday, or every day.', 'aidorbit'), 'url' => '/volunteers/me/availability'),
 				array('title' => __('Recommended Missions', 'aidorbit'), 'summary' => __('Find Missions that match your profile and interests.', 'aidorbit'), 'url' => '/volunteers/me/recommendations'),
 			);
 		}
@@ -663,6 +664,17 @@ final class AidOrbit_Renderer {
 			__('Sign in to view submitted hours and proof-of-service details.', 'aidorbit'),
 			__('Open my hours', 'aidorbit'),
 			'/volunteers/me/hours',
+			$attributes
+		);
+	}
+
+	public function my_availability(array $attributes): string {
+		$this->enqueue_assets();
+		return $this->volunteer_action_panel(
+			__('My Availability', 'aidorbit'),
+			__('Sign in to set general availability for matching, including every weekend, each weekday, every day, or custom recurring windows.', 'aidorbit'),
+			__('Set my availability', 'aidorbit'),
+			'/volunteers/me/availability',
 			$attributes
 		);
 	}

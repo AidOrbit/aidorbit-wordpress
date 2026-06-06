@@ -371,6 +371,10 @@
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
 
+	register('aidorbit/my-availability', __('AidOrbit My Availability', 'aidorbit'), [
+		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
+	]);
+
 	register('aidorbit/recommended-missions', __('AidOrbit Recommended Missions', 'aidorbit'), [
 		{ name: 'redirect', label: __('Return URL', 'aidorbit') }
 	]);
