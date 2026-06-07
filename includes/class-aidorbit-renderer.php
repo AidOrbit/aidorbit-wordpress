@@ -1248,7 +1248,7 @@ final class AidOrbit_Renderer {
 	private function mission_card(array $mission, array $options = array()): string {
 		$title        = $this->field($mission, array('title', 'name'), __('Untitled Mission', 'aidorbit'));
 		$id           = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), '');
-		$summary      = $this->field($mission, array('summary', 'description'), '');
+		$summary      = $this->field($mission, array('description'), '');
 		$starts_at    = $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
 		$ends_at      = $this->field($mission, array('endsAt', 'ends_at', 'end'), '');
 		$timezone     = (string) $this->field($mission, array('timezone', 'timeZone', 'time_zone'), '');
@@ -1380,7 +1380,7 @@ final class AidOrbit_Renderer {
 	private function mission_schema(array $mission): string {
 		$id        = (string) $this->field($mission, array('id', 'missionId', 'mission_id'), '');
 		$title     = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
-		$summary   = (string) $this->field($mission, array('summary', 'description'), '');
+		$summary   = (string) $this->field($mission, array('description'), '');
 		$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
 		$ends_at   = (string) $this->field($mission, array('endsAt', 'ends_at', 'end'), '');
 		$schema    = array(
@@ -1402,7 +1402,7 @@ final class AidOrbit_Renderer {
 
 	private function calendar_url(array $mission): string {
 		$title     = (string) $this->field($mission, array('title', 'name'), __('Mission', 'aidorbit'));
-		$summary   = (string) $this->field($mission, array('summary', 'description'), '');
+		$summary   = (string) $this->field($mission, array('description'), '');
 		$starts_at = (string) $this->field($mission, array('startsAt', 'starts_at', 'start'), '');
 		$ends_at   = (string) $this->field($mission, array('endsAt', 'ends_at', 'end'), '');
 		$is_virtual = (bool) $this->field($mission, array('isVirtual', 'is_virtual', 'virtual'), false);
